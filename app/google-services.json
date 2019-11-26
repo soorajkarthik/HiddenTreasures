@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "604303935502",
+    "firebase_url": "https://hiddentreasures-sk.firebaseio.com",
+    "project_id": "hiddentreasures-sk",
+    "storage_bucket": "hiddentreasures-sk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604303935502:android:0efebdbadd7967295a145f",
+        "android_client_info": {
+          "package_name": "com.example.sooraj.hiddentreasures"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "604303935502-gi8rpt9i2vl1s1i106ii5rctocnfvthq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sooraj.hiddentreasures",
+            "certificate_hash": "6503e2430705e030608788e60e1b4d91942dd8ec"
+          }
+        },
+        {
+          "client_id": "604303935502-4fcl9196lv6t3h8o5crh2m9opg0k78ds.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNO2nmTaagT7QK5H3K34civ6DBWSeuRZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "604303935502-4fcl9196lv6t3h8o5crh2m9opg0k78ds.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
