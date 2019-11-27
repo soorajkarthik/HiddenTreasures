@@ -1,5 +1,8 @@
 package com.example.hiddentreasures.Model;
 
+//EXTEND COMPARABLE THEN USE COMPARETO METHOD TO ORDER USERS IN TERMS OF HOW MANY THINGS THEY HAVE FOUND
+//ONLY ALLOW USERS TO ADD TO THINGS THEY HAVE FOUND IF THEY ARE WITHIN 50 FEET OF IT
+
 public class User {
 
     public String email;
@@ -9,7 +12,7 @@ public class User {
     public User() {
 
     }
-    
+
     public User(String email, String userName, String password) {
         this.email = email;
         this.username = userName;

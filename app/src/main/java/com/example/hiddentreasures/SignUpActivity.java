@@ -123,7 +123,6 @@ public class SignUpActivity extends AppCompatActivity {
 
             /**
              * Send user to Login screen
-             *
              * @param view view of the clicked button
              */
             @Override
