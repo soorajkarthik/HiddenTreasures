@@ -23,27 +23,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            app:tabMode="scrollable"
+            android:animateLayoutChanges="true"
+            app:tabMode="fixed"
             app:tabSelectedTextColor="@android:color/white"
             app:tabTextColor="@android:color/black">
 
         <com.google.android.material.tabs.TabItem
-                android:id="@+id/tab1"
+                android:id="@+id/historyTab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Progress"/>
+                android:text="History"/>
 
         <com.google.android.material.tabs.TabItem
-                android:id="@+id/stepsTab"
+                android:id="@+id/mapTab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Steps"/>
-
-        <com.google.android.material.tabs.TabItem
-                android:id="@+id/foodTab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Food"/>
+                android:text="Map"/>
 
         <com.google.android.material.tabs.TabItem
                 android:id="@+id/socialTab"
@@ -51,13 +46,9 @@
                 android:layout_height="wrap_content"
                 android:text="Social"/>
 
-        <com.google.android.material.tabs.TabItem
-                android:id="@+id/profileTab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Profile"/>
 
     </com.google.android.material.tabs.TabLayout>
+
 
     <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewPager"

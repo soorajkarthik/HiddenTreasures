@@ -11,7 +11,6 @@ public class PageAdapter extends FragmentPagerAdapter {
 
     /**
      * Constructor
-     *
      * @param fragmentManager FragmentManager used by the current activity
      * @param numOfTabs       number of tabs in TabLayout
      */
@@ -30,19 +29,13 @@ public class PageAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0:
-                return new Fragment();
+                return new HistoryFragment();
 
             case 1:
-                return new Fragment();
+                return new MapFragment();
 
             case 2:
-                return new Fragment();
-
-            case 3:
-                return new Fragment();
-
-            case 4:
-                return new Fragment();
+                return new SocialFragment();
 
             default:
                 return null;

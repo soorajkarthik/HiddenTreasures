@@ -3,12 +3,12 @@ package com.example.hiddentreasures;
 
 import android.os.Bundle;
 import android.widget.Toolbar;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 import com.example.hiddentreasures.Model.User;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.*;
 
 import java.util.Objects;
 
@@ -37,6 +37,18 @@ public class MainActivity extends AppCompatActivity {
                 .getExtras()
                 .getString("username"));
 
+        users.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                user = dataSnapshot.child(username).getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         setUpLayout();
     }
 
@@ -54,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
+                viewPager.setCurrentItem(tab.getPosition(), true);
+
             }
 
             //Required method
@@ -69,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Connects ViewPager to TabLayout
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     }
 
     @Override
