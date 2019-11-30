@@ -87,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     }
 
+    public User getUser() {
+        return user;
+    }
+
     @Override
     public void onBackPressed() {
         return;
