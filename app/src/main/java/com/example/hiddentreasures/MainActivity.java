@@ -41,15 +41,34 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.child(username).getValue(User.class);
+                notify();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
+
+
         });
 
+        synchronized (this) {
+            try {
+                wait();
+            } catch (Exception e) {
+            }
+        }
+
         setUpLayout();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (user != null) {
+            user.setLastSeen(System.currentTimeMillis());
+            users.child(username).child("lastSeen").setValue(user.getLastSeen());
+        }
     }
 
     private void setUpLayout() {

@@ -18,12 +18,6 @@ public class HistoryFragment extends Fragment {
     private User user;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         database = FirebaseDatabase.getInstance();

@@ -3,13 +3,23 @@ package com.example.hiddentreasures.Model;
 //EXTEND COMPARABLE THEN USE COMPARETO METHOD TO ORDER USERS IN TERMS OF HOW MANY THINGS THEY HAVE FOUND
 //ONLY ALLOW USERS TO ADD TO THINGS THEY HAVE FOUND IF THEY ARE WITHIN 50 FEET OF IT
 
+import java.util.ArrayList;
+
 public class User {
 
-    public String email;
-    public String username;
-    public String password;
+    private String email;
+    private String username;
+    private String password;
+
+    private long lastSeen;
+
+    private ArrayList<String> friendList;
+    private ArrayList<FriendRequest> friendRequests;
 
     public User() {
+
+        friendList = new ArrayList<>();
+        friendRequests = new ArrayList<>();
 
     }
 
@@ -42,4 +52,30 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public void addFriendRequest(FriendRequest friendRequest) {
+        friendRequests.add(friendRequest);
+    }
+
+    public void acceptFriendRequest(FriendRequest friendRequest) {
+        friendRequests.remove(friendRequest);
+        friendList.add(friendRequest.getUsername());
+    }
+
+    public ArrayList<FriendRequest> getFriendRequests() {
+        return friendRequests;
+    }
+
+    public ArrayList<String> getFriendList() {
+        return friendList;
+    }
+
+    public long getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(long lastSeen) {
+        this.lastSeen = lastSeen;
+    }
+
 }
