@@ -2,9 +2,7 @@ package com.example.hiddentreasures;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,19 +27,27 @@ public class SocialFragment extends Fragment {
     private SearchView searchView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
         user = ((MainActivity) getActivity()).getUser();
         username = user.getUsername();
 
-        // Inflate the layout for this fragment
+        setHasOptionsMenu(true);
         view = inflater.inflate(R.layout.fragment_social, container, false);
+
         friendList = view.findViewById(R.id.friendList);
         friendList.setAdapter(new FriendListAdapter(getActivity(), user.getFriendList()));
+
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.menu_social, menu);
+
     }
 
     /**
@@ -113,6 +119,10 @@ public class SocialFragment extends Fragment {
             final int index = i;
             final View thisView = layoutInflater.inflate(R.layout.friends_view, null);
             final FriendListHolder holder = new FriendListHolder();
+
+            holder.lastSeen = thisView.findViewById(R.id.lastSeenText);
+            holder.usernameText = thisView.findViewById(R.id.usernameText);
+
 
             users.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override

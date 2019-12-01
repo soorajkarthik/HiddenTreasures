@@ -5,7 +5,7 @@ package com.example.hiddentreasures.Model;
 
 import java.util.ArrayList;
 
-public class User {
+public class User implements Comparable {
 
     private String email;
     private String username;
@@ -17,10 +17,8 @@ public class User {
     private ArrayList<FriendRequest> friendRequests;
 
     public User() {
-
         friendList = new ArrayList<>();
         friendRequests = new ArrayList<>();
-
     }
 
     public User(String email, String userName, String password) {
@@ -78,4 +76,14 @@ public class User {
         this.lastSeen = lastSeen;
     }
 
+    public int calculateScore() {
+
+        //add logic to calculate score
+        return -1;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return calculateScore() - ((User) o).calculateScore();
+    }
 }

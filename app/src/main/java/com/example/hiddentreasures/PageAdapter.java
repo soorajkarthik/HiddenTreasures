@@ -28,14 +28,15 @@ public class PageAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
 
         switch (position) {
+
             case 0:
-                return new HistoryFragment();
+                return new SocialFragment();
 
             case 1:
                 return new MapFragment();
 
             case 2:
-                return new SocialFragment();
+                return new ProfileFragment();
 
             default:
                 return null;

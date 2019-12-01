@@ -10,7 +10,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
-public class HistoryFragment extends Fragment {
+public class ProfileFragment extends Fragment {
 
     private FirebaseDatabase database;
     private DatabaseReference users;
@@ -26,7 +26,7 @@ public class HistoryFragment extends Fragment {
         username = user.getUsername();
 
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.fragment_history, container, false);
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
 }
