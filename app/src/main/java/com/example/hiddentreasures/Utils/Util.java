@@ -11,8 +11,8 @@ public class Util {
         long months = difference / ((long) 30 * 24 * 60 * 60 * 1000);
         long weeks = difference / (7 * 24 * 60 * 60 * 1000);
         long days = difference / (24 * 60 * 60 * 1000);
-        long hours = difference / (24 * 60 * 60 * 1000);
-        long minutes = difference / (60 * 60 * 1000);
+        long hours = difference / (60 * 60 * 1000);
+        long minutes = difference / (60 * 1000);
 
         if (years > 0) {
 
