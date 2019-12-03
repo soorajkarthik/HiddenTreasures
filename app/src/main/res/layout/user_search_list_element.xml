@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -10,54 +11,46 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Friend's Username"
+            android:layout_marginTop="16dp"
+            android:text="Username"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/btnAccept"/>
-
+            app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-            android:id="@+id/timeReceived"
+            android:id="@+id/requestStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="0dp"
-            android:text="Received:"
+            android:layout_marginTop="5dp"
+            android:text="Request Status: "
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="@id/usernameText"
-            app:layout_constraintTop_toTopOf="@id/btnDelete"/>
+            app:layout_constraintTop_toBottomOf="@id/usernameText"/>
 
     <TextView
-            android:id="@+id/timeReceivedText"
+            android:id="@+id/requestStatusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Time Text"
+            android:layout_marginTop="5dp"
+            android:text="Status Text"
             android:textSize="14sp"
-            app:layout_constraintStart_toEndOf="@id/timeReceived"
-            app:layout_constraintTop_toTopOf="@id/btnDelete"/>
+            app:layout_constraintStart_toEndOf="@id/requestStatus"
+            app:layout_constraintTop_toBottomOf="@id/usernameText"/>
 
     <Button
-            android:id="@+id/btnAccept"
+            android:id="@+id/updateFriendStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="24dp"
-            android:layout_marginTop="16dp"
-            android:text="Accept"
+            android:layout_marginBottom="4dp"
+            android:text="Request"
             android:textSize="12sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-    <Button
-            android:id="@+id/btnDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="8dp"
-            android:text="Delete"
-            android:textSize="12sp"
-            app:layout_constraintTop_toBottomOf="@id/btnAccept"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
+            app:layout_constraintBottom_toBottomOf="@id/requestStatusText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/usernameText"/>
 
     <Space
             android:layout_width="0dp"
@@ -65,6 +58,6 @@
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnDelete"/>
+            app:layout_constraintTop_toBottomOf="@id/requestStatus"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

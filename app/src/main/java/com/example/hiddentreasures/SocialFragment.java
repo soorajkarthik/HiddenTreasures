@@ -1,6 +1,5 @@
 package com.example.hiddentreasures;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.*;
@@ -9,6 +8,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import com.example.hiddentreasures.Model.FriendRequest;
@@ -44,14 +44,7 @@ public class SocialFragment extends Fragment {
         friendList = view.findViewById(R.id.friendList);
         friendList.setAdapter(new FriendListAdapter(getActivity(), user.getFriendList()));
 
-        user.addFriendRequest(new FriendRequest(System.currentTimeMillis() - 100000, "Test123"));
-        user.addFriendRequest(new FriendRequest(System.currentTimeMillis() - 1000000, "Test123"));
-        user.addFriendRequest(new FriendRequest(System.currentTimeMillis() - 10000000, "Test123"));
-        user.addFriendRequest(new FriendRequest(System.currentTimeMillis() - 100000000, "Test123"));
-        user.addFriendRequest(new FriendRequest(System.currentTimeMillis() - 1000000000, "Test123"));
-        user.addFriendRequest(new FriendRequest(System.currentTimeMillis() - 10000000000L, "Test123"));
-        user.addFriendRequest(new FriendRequest(System.currentTimeMillis() - 100000000000L, "Test123"));
-        user.addFriendRequest(new FriendRequest(System.currentTimeMillis() - 1000000000000L, "Test123"));
+        searchList = view.findViewById(R.id.userSearchList);
 
         return view;
     }
@@ -61,6 +54,42 @@ public class SocialFragment extends Fragment {
 
         inflater.inflate(R.menu.menu_social, menu);
 
+        searchView = (SearchView) menu.getItem(1).getActionView();
+        searchView.setQueryHint("Start typing to search");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            /**
+             * Required method, no action necessary
+             */
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            /**
+             * Refreshes search results every time user types/deletes a letter
+             *
+             * @param newText the string currently in the search bar
+             * @return false since listener does not show any suggestions
+             */
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                if (newText.length() > 0) {
+
+                    searchForUsers(newText);
+                    setFriendListInvisible();
+
+                } else {
+
+                    setFriendListVisible();
+                }
+
+                return false;
+            }
+        });
     }
 
     @Override
@@ -80,12 +109,86 @@ public class SocialFragment extends Fragment {
             builder.setView(inflatedView);
             builder.setNegativeButton("Done", (dialog, which) -> dialog.dismiss());
             builder.show();
-        } else if (item.getItemId() == R.id.userSearch) {
-
         }
 
         return true;
+    }
 
+    /**
+     * Gets all usernames stored in Firebase, stores them in an ArrayList
+     * Passes ArrayList to updateSearchResults method
+     *
+     * @param searchText the user's input
+     */
+    public void searchForUsers(final String searchText) {
+
+        ArrayList<String> usernameList = new ArrayList<>();
+
+        if (usernameList.isEmpty()) {
+
+            users.addValueEventListener(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        usernameList.add(snapshot
+                                .child("username")
+                                .getValue(String.class));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+        }
+
+        updateSearchResults(searchText, usernameList);
+    }
+
+    /**
+     * Filters usernames based on user's input
+     * Stores filtered usernames in a new ArrayList
+     * Updates display with search results
+     *
+     * @param searchText   the user's input
+     * @param usernameList list of all usernames in Firebase
+     */
+    public void updateSearchResults(String searchText, ArrayList<String> usernameList) {
+
+        ArrayList<String> filteredUsernameList = new ArrayList<>();
+
+        usernameList.remove(username);
+
+        for (String tempUsername : usernameList) {
+
+            if (tempUsername.toLowerCase().contains(searchText.toLowerCase())) {
+                filteredUsernameList.add(tempUsername);
+            }
+        }
+
+        searchList.setAdapter(new UserSearchAdapter(getActivity(), filteredUsernameList, searchText));
+
+    }
+
+    /**
+     * Sets friend list visible
+     * Sets search results invisible
+     */
+    public void setFriendListVisible() {
+        friendList.setVisibility(View.VISIBLE);
+        searchList.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     * Sets friend list invisible
+     * Sets search results visible
+     */
+    public void setFriendListInvisible() {
+        friendList.setVisibility(View.INVISIBLE);
+        searchList.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -328,6 +431,200 @@ public class SocialFragment extends Fragment {
             TextView timeReceivedText;
             Button btnAccept;
             Button btnDelete;
+        }
+    }
+
+    enum RequestType {
+        sent, accepted, none
+    }
+
+    /**
+     * Custom adapter for searchResults ListView
+     */
+    class UserSearchAdapter extends BaseAdapter {
+
+        int count;
+        Context context;
+        private LayoutInflater layoutInflater;
+        private ArrayList<String> filteredUsernameList = new ArrayList<>();
+        private String searchText;
+
+        /**
+         * Constructor
+         *
+         * @param context              current application context
+         * @param filteredUsernameList filtered search results
+         */
+        public UserSearchAdapter(Context context, ArrayList<String> filteredUsernameList, String searchText) {
+
+            layoutInflater = LayoutInflater.from(context);
+            this.filteredUsernameList.addAll(filteredUsernameList);
+            this.count = filteredUsernameList.size();
+            this.context = context;
+            this.searchText = searchText;
+        }
+
+        /**
+         * @return number of elements there will be in ListView
+         */
+        @Override
+        public int getCount() {
+            return count;
+        }
+
+        /**
+         * @param i index of object
+         * @return username at index i
+         */
+        @Override
+        public Object getItem(int i) {
+            return filteredUsernameList.get(i);
+        }
+
+        /**
+         * Required method in order to be subclass of BaseAdapter
+         */
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        /**
+         * Configures element of ListView
+         *
+         * @param i         index of element in ListView
+         * @param view      view of the element in index i
+         * @param viewGroup the ListView
+         * @return the view of the configured element in the ListView
+         */
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+
+            if (view != null)
+                return view;
+
+            View thisView = layoutInflater.inflate(R.layout.user_search_list_element, null);
+            FriendSearchHolder holder = new FriendSearchHolder();
+            holder.usernameText = thisView.findViewById(R.id.usernameText);
+            holder.requestStatusText = thisView.findViewById(R.id.requestStatusText);
+            holder.updateFriendStatus = thisView.findViewById(R.id.updateFriendStatus);
+
+
+            users.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                /**
+                 * Checks to see if user has sent/is a friend of searchedUser
+                 * If user is a friend, allow them to remove the searchedUser from their friend list
+                 * If user has already sent a friend request, allow them to cancel the request
+                 * If neither, allow user to send the searchedUser a friend request
+                 * @param dataSnapshot snapshot of the Users node in its current state
+                 */
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    final User searchedUser = dataSnapshot.child(filteredUsernameList.get(i)).getValue(User.class);
+                    final RequestType requestType;
+
+                    holder.usernameText.setText(searchedUser.getUsername());
+
+                    if (searchedUser.hasFriendRequestFromUser(username)) {
+
+                        holder.requestStatusText.setText("Requested");
+                        holder.updateFriendStatus.setText("Cancel");
+                        requestType = RequestType.sent;
+                    } else if (user.isFriendOfUser(searchedUser.getUsername())) {
+
+                        holder.requestStatusText.setText("Accepted");
+                        holder.updateFriendStatus.setText("Remove");
+                        requestType = RequestType.accepted;
+                    } else {
+
+                        holder.requestStatusText.setText("None");
+                        holder.updateFriendStatus.setText("Request");
+                        requestType = RequestType.none;
+                    }
+
+                    switch (requestType) {
+                        case sent:
+
+                            holder.updateFriendStatus.setOnClickListener(new View.OnClickListener() {
+
+                                /**
+                                 * Cancels friend request send to searchedUser
+                                 * @param view view of the clicked button
+                                 */
+                                @Override
+                                public void onClick(View view) {
+
+                                    searchedUser.removeFriendRequestFromUser(username);
+                                    users.child(searchedUser.getUsername()).child("friendRequests").setValue(searchedUser.getFriendRequests());
+                                    updateSearchResults(searchText, filteredUsernameList);
+                                }
+                            });
+
+                            break;
+
+                        case accepted:
+
+                            holder.updateFriendStatus.setOnClickListener(new View.OnClickListener() {
+
+                                /**
+                                 * Removes searchedUser from friendList
+                                 * @param view view of the clicked button
+                                 */
+                                @Override
+                                public void onClick(View view) {
+                                    user.removeFriend(searchedUser.getUsername());
+                                    searchedUser.removeFriend(username);
+                                    users.child(searchedUser.getUsername()).child("friendList").setValue(searchedUser.getFriendList());
+                                    users.child(username).child("friendList").setValue(user.getFriendList());
+                                    updateSearchResults(searchText, filteredUsernameList);
+                                    friendList.setAdapter(new FriendListAdapter(getActivity(), user.getFriendList()));
+                                }
+                            });
+
+                            break;
+
+                        case none:
+
+                            holder.updateFriendStatus.setOnClickListener(new View.OnClickListener() {
+
+                                /**
+                                 * Sends friend request send to searchedUser
+                                 * @param view view of the clicked button
+                                 */
+                                @Override
+                                public void onClick(View view) {
+
+                                    searchedUser.addFriendRequest(new FriendRequest(System.currentTimeMillis(), username));
+                                    users.child(searchedUser.getUsername()).setValue(searchedUser);
+                                    updateSearchResults(searchText, filteredUsernameList);
+                                }
+                            });
+
+                            break;
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+
+            thisView.setTag(holder);
+            view = thisView;
+
+            return view;
+        }
+
+        /**
+         * Structure for holding all components of a list element
+         */
+        class FriendSearchHolder {
+
+            TextView usernameText;
+            Button updateFriendStatus;
+            TextView requestStatusText;
         }
     }
 

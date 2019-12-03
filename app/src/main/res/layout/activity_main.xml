@@ -8,8 +8,6 @@
         tools:context=".MainActivity"
         android:orientation="vertical">
 
-
-
     <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"

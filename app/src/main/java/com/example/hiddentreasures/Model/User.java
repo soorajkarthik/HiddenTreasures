@@ -59,13 +59,30 @@ public class User implements Comparable {
         friendRequests.remove(friendRequest);
     }
 
+    public void removeFriendRequestFromUser(String username) {
+        friendRequests.removeIf(friendRequest -> friendRequest.getUsername().equals(username));
+    }
+
     public void acceptFriendRequest(FriendRequest friendRequest) {
         friendRequests.remove(friendRequest);
         addFriend(friendRequest.getUsername());
     }
 
+    public boolean hasFriendRequestFromUser(String username) {
+        return friendRequests.stream().anyMatch(friendRequest -> friendRequest.getUsername().equals(username));
+    }
+
+    public boolean isFriendOfUser(String username) {
+        return friendList.contains(username);
+    }
+
+
     public void addFriend(String username) {
         friendList.add(username);
+    }
+
+    public void removeFriend(String username) {
+        friendList.remove(username);
     }
 
     public ArrayList<FriendRequest> getFriendRequests() {

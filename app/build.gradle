@@ -9,7 +9,7 @@ android {
 
         applicationId "com.example.sooraj.hiddentreasures"
 
-        minSdkVersion 22
+        minSdkVersion 24
 
         targetSdkVersion 28
 
