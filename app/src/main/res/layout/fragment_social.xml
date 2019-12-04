@@ -8,7 +8,7 @@
 
     <ListView
             android:id="@+id/friendList"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="#E6E6E6"
             android:dividerHeight="8dp"
@@ -17,7 +17,7 @@
 
     <ListView
             android:id="@+id/userSearchList"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="#E6E6E6"
             android:dividerHeight="8dp"

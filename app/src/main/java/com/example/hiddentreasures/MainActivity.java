@@ -133,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
 
         //Connects ViewPager to TabLayout
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        viewPager.setCurrentItem(0);
         isTabLayoutSetUpDone = true;
     }
 

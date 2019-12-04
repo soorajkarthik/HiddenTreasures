@@ -49,6 +49,7 @@ public class SocialFragment extends Fragment {
         return view;
     }
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
@@ -123,29 +124,20 @@ public class SocialFragment extends Fragment {
     public void searchForUsers(final String searchText) {
 
         ArrayList<String> usernameList = new ArrayList<>();
+        users.addValueEventListener(new ValueEventListener() {
 
-        if (usernameList.isEmpty()) {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-            users.addValueEventListener(new ValueEventListener() {
+                dataSnapshot.getChildren().forEach(child -> usernameList.add(child.child("username").getValue(String.class)));
+                updateSearchResults(searchText, usernameList);
+            }
 
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
 
-
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        usernameList.add(snapshot
-                                .child("username")
-                                .getValue(String.class));
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-            });
-        }
-
-        updateSearchResults(searchText, usernameList);
     }
 
     /**
@@ -166,11 +158,11 @@ public class SocialFragment extends Fragment {
 
             if (tempUsername.toLowerCase().contains(searchText.toLowerCase())) {
                 filteredUsernameList.add(tempUsername);
+
             }
         }
 
-        searchList.setAdapter(new UserSearchAdapter(getActivity(), filteredUsernameList, searchText));
-
+        searchList.setAdapter(new UserSearchAdapter(getActivity(), filteredUsernameList));
     }
 
     /**
@@ -446,8 +438,7 @@ public class SocialFragment extends Fragment {
         int count;
         Context context;
         private LayoutInflater layoutInflater;
-        private ArrayList<String> filteredUsernameList = new ArrayList<>();
-        private String searchText;
+        private ArrayList<String> filteredUsernameList;
 
         /**
          * Constructor
@@ -455,13 +446,13 @@ public class SocialFragment extends Fragment {
          * @param context              current application context
          * @param filteredUsernameList filtered search results
          */
-        public UserSearchAdapter(Context context, ArrayList<String> filteredUsernameList, String searchText) {
+        public UserSearchAdapter(Context context, ArrayList<String> filteredUsernameList) {
 
             layoutInflater = LayoutInflater.from(context);
+            this.filteredUsernameList = new ArrayList<>();
             this.filteredUsernameList.addAll(filteredUsernameList);
             this.count = filteredUsernameList.size();
             this.context = context;
-            this.searchText = searchText;
         }
 
         /**
@@ -499,9 +490,6 @@ public class SocialFragment extends Fragment {
          */
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-
-            if (view != null)
-                return view;
 
             View thisView = layoutInflater.inflate(R.layout.user_search_list_element, null);
             FriendSearchHolder holder = new FriendSearchHolder();
@@ -557,8 +545,8 @@ public class SocialFragment extends Fragment {
                                 public void onClick(View view) {
 
                                     searchedUser.removeFriendRequestFromUser(username);
-                                    users.child(searchedUser.getUsername()).child("friendRequests").setValue(searchedUser.getFriendRequests());
-                                    updateSearchResults(searchText, filteredUsernameList);
+                                    users.child(searchedUser.getUsername()).setValue(searchedUser);
+                                    searchForUsers(searchView.getQuery().toString());
                                 }
                             });
 
@@ -576,9 +564,10 @@ public class SocialFragment extends Fragment {
                                 public void onClick(View view) {
                                     user.removeFriend(searchedUser.getUsername());
                                     searchedUser.removeFriend(username);
-                                    users.child(searchedUser.getUsername()).child("friendList").setValue(searchedUser.getFriendList());
-                                    users.child(username).child("friendList").setValue(user.getFriendList());
-                                    updateSearchResults(searchText, filteredUsernameList);
+
+                                    users.child(searchedUser.getUsername()).setValue(searchedUser);
+                                    users.child(username).setValue(user);
+                                    searchForUsers(searchView.getQuery().toString());
                                     friendList.setAdapter(new FriendListAdapter(getActivity(), user.getFriendList()));
                                 }
                             });
@@ -598,7 +587,7 @@ public class SocialFragment extends Fragment {
 
                                     searchedUser.addFriendRequest(new FriendRequest(System.currentTimeMillis(), username));
                                     users.child(searchedUser.getUsername()).setValue(searchedUser);
-                                    updateSearchResults(searchText, filteredUsernameList);
+                                    searchForUsers(searchView.getQuery().toString());
                                 }
                             });
 
