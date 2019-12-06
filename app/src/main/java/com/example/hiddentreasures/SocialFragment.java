@@ -96,7 +96,7 @@ public class SocialFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (item.getItemId() == R.id.friendRequests) {
+        if (item.getItemId() == R.id.optFriendRequests) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Friend Requests");
             View inflatedView = LayoutInflater.from(getContext())

@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-            android:id="@+id/friendRequests"
-            android:icon="@drawable/smiley_face_white_24dp"
+            android:id="@+id/optFriendRequests"
+            android:icon="@drawable/ic_smiley_face_white_24dp"
             android:title="Friend Requests"
             app:showAsAction="always"/>
 
     <item
-            android:id="@+id/userSearch"
-            android:icon="@drawable/search_white_24dp"
+            android:id="@+id/optUserSearch"
+            android:icon="@drawable/ic_search_white_24dp"
             android:title="Search"
             app:showAsAction="always"
             app:actionViewClass="androidx.appcompat.widget.SearchView"
