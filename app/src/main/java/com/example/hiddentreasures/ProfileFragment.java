@@ -1,9 +1,10 @@
 package com.example.hiddentreasures;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import com.example.hiddentreasures.Model.User;
 import com.google.firebase.database.DatabaseReference;
@@ -16,6 +17,7 @@ public class ProfileFragment extends Fragment {
     private DatabaseReference users;
     private String username;
     private User user;
+    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -26,7 +28,46 @@ public class ProfileFragment extends Fragment {
         username = user.getUsername();
 
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        view = inflater.inflate(R.layout.fragment_profile, container, false);
+        return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.menu_profile, menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.optLogOut) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Confirm");
+            builder.setMessage("Are you sure you want to log out?");
+
+            builder.setPositiveButton("Log Out", (dialog, which) -> {
+
+                SharedPreferences pref = getActivity()
+                        .getApplicationContext()
+                        .getSharedPreferences("MyPref", 0);
+
+                SharedPreferences.Editor editor = pref.edit();
+                editor.remove("username");
+                editor.commit();
+
+                Intent myIntent = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
+                startActivity(myIntent);
+            });
+
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+
+            builder.show();
+        }
+
+        return true;
+
     }
 
 }
