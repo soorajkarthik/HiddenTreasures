@@ -52,7 +52,8 @@ public class SignUpActivity extends AppCompatActivity {
 
                 final User temp = new User(editMail.getText().toString(),
                         editUsername.getText().toString(),
-                        editPassword.getText().toString());
+                        editPassword.getText().toString(),
+                        System.currentTimeMillis());
 
                 users.addListenerForSingleValueEvent(new ValueEventListener() {
 

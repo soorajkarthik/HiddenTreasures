@@ -10,7 +10,7 @@ public class User implements Comparable {
     private String email;
     private String username;
     private String password;
-
+    private long dateJoined;
     private long lastSeen;
 
     private ArrayList<String> friendList;
@@ -21,10 +21,11 @@ public class User implements Comparable {
         friendRequests = new ArrayList<>();
     }
 
-    public User(String email, String userName, String password) {
+    public User(String email, String userName, String password, long dateJoined) {
         this.email = email;
         this.username = userName;
         this.password = password;
+        this.dateJoined = dateJoined;
     }
 
     public String getUsername() {
@@ -49,6 +50,10 @@ public class User implements Comparable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public long getDateJoined() {
+        return dateJoined;
     }
 
     public void addFriendRequest(FriendRequest friendRequest) {

@@ -56,6 +56,7 @@ public class SocialFragment extends Fragment {
         inflater.inflate(R.menu.menu_social, menu);
 
         searchView = (SearchView) menu.getItem(1).getActionView();
+
         searchView.setQueryHint("Start typing to search");
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

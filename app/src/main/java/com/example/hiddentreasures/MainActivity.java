@@ -4,6 +4,7 @@ package com.example.hiddentreasures;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 import com.example.hiddentreasures.Model.User;
 import com.google.android.material.tabs.TabLayout;
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     //Fields
     private FirebaseDatabase database;
     private DatabaseReference users;
+    private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private PageAdapter pageAdapter;
@@ -36,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
         username = Objects.requireNonNull(getIntent()
                 .getExtras()
                 .getString("username"));
-
 
         isTabLayoutSetUpDone = false;
         updateUser();
@@ -87,10 +88,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpLayout() {
 
+        toolbar = findViewById(R.id.toolbar);
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
         pageAdapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+
         viewPager.setAdapter(pageAdapter);
+        setSupportActionBar(toolbar);
+
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 
@@ -102,15 +107,15 @@ public class MainActivity extends AppCompatActivity {
                 switch (tab.getPosition()) {
 
                     case 0:
-                        setTitle("Social");
+                        getSupportActionBar().setTitle("Social");
                         break;
 
                     case 1:
-                        setTitle("Map");
+                        getSupportActionBar().setTitle("Map");
                         break;
 
                     case 2:
-                        setTitle("Profile");
+                        getSupportActionBar().setTitle("Profile");
                         break;
 
                     default:

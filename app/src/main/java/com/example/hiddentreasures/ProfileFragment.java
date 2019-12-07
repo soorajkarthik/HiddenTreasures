@@ -37,6 +37,7 @@ public class ProfileFragment extends Fragment {
 
         inflater.inflate(R.menu.menu_profile, menu);
 
+
     }
 
     @Override
