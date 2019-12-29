@@ -7,13 +7,17 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.example.hiddentreasures.Model.Treasure;
 import com.example.hiddentreasures.Model.User;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.*;
+import com.google.maps.android.clustering.ClusterManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
@@ -23,7 +27,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private User user;
     private View view;
     private MapView mapView;
-    private GoogleMap googleMap;
+    private GoogleMap mGoogleMap;
+    private List<Treasure> treasureList;
+    private ClusterManager<Treasure> clusterManager;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,9 +39,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         treasures = database.getReference("Treasures");
         user = ((MainActivity) getActivity()).getUser();
         username = user.getUsername();
+        treasureList = new ArrayList<>();
 
         setHasOptionsMenu(true);
         view = inflater.inflate(R.layout.fragment_map, container, false);
+
+        treasures.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                dataSnapshot.getChildren().forEach(child -> treasureList.add(child.getValue(Treasure.class)));
+                clusterManager = new ClusterManager<>(getContext(), mGoogleMap);
+                treasureList.forEach(treasure -> clusterManager.addItem(treasure));
+                mGoogleMap.setOnCameraIdleListener(clusterManager);
+                mGoogleMap.setOnMarkerClickListener(clusterManager);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         return view;
     }
 
@@ -55,11 +82,33 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         MapsInitializer.initialize(getContext());
 
-        this.googleMap = googleMap;
-        this.googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mGoogleMap = googleMap;
+        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mGoogleMap.setMyLocationEnabled(true);
 
-        //googleMap.addMarker(new MarkerOptions().position(new LatLng(33.181128, -96.747210)).title("hi"));
-        //CameraPosition pos = CameraPosition.builder().target(new LatLng(33.181128, -96.747210)).build();
-        //googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(pos));
+    }
+
+    @Override
+    public void onResume() {
+        mapView.onResume();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        mapView.onPause();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        mapView.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        mapView.onLowMemory();
+        super.onLowMemory();
     }
 }
