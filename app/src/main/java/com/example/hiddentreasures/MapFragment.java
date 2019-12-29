@@ -12,14 +12,13 @@ import com.example.hiddentreasures.Model.User;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.firebase.database.*;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment {
 
     private FirebaseDatabase database;
     private DatabaseReference treasures;
@@ -35,32 +34,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        super.onCreateView(inflater, container, savedInstanceState);
         database = FirebaseDatabase.getInstance();
         treasures = database.getReference("Treasures");
         user = ((MainActivity) getActivity()).getUser();
         username = user.getUsername();
         treasureList = new ArrayList<>();
 
-        setHasOptionsMenu(true);
-        view = inflater.inflate(R.layout.fragment_map, container, false);
-
         treasures.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 dataSnapshot.getChildren().forEach(child -> treasureList.add(child.getValue(Treasure.class)));
-                clusterManager = new ClusterManager<>(getContext(), mGoogleMap);
-                treasureList.forEach(treasure -> clusterManager.addItem(treasure));
-                mGoogleMap.setOnCameraIdleListener(clusterManager);
-                mGoogleMap.setOnMarkerClickListener(clusterManager);
-
+                loadMap();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
+
         });
+
+        setHasOptionsMenu(true);
+        view = inflater.inflate(R.layout.fragment_map, container, false);
 
         return view;
     }
@@ -68,47 +65,49 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         mapView = view.findViewById(R.id.mapView);
-        if (mapView != null) {
-            mapView.onCreate(savedInstanceState);
-            mapView.getMapAsync(this);
-        }
-
+        mapView.onCreate(savedInstanceState);
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
+    private void loadMap() {
 
-        MapsInitializer.initialize(getContext());
+        mapView.getMapAsync(googleMap -> {
 
-        mGoogleMap = googleMap;
-        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mGoogleMap.setMyLocationEnabled(true);
+            MapsInitializer.initialize(getContext());
 
+            mGoogleMap = googleMap;
+            mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            mGoogleMap.setMyLocationEnabled(true);
+
+            clusterManager = new ClusterManager<>(getContext(), mGoogleMap);
+            clusterManager.setAnimation(false);
+            treasureList.forEach(treasure -> clusterManager.addItem(treasure));
+            mGoogleMap.setOnCameraIdleListener(clusterManager);
+            mGoogleMap.setMinZoomPreference(1f);
+        });
     }
 
     @Override
     public void onResume() {
-        mapView.onResume();
         super.onResume();
+        mapView.onResume();
     }
 
     @Override
     public void onPause() {
-        mapView.onPause();
         super.onPause();
+        mapView.onPause();
     }
 
     @Override
-    public void onDestroy() {
-        mapView.onDestroy();
-        super.onDestroy();
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
     }
 
     @Override
     public void onLowMemory() {
-        mapView.onLowMemory();
         super.onLowMemory();
+        mapView.onLowMemory();
     }
 }
