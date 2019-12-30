@@ -13,7 +13,6 @@ import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import com.example.hiddentreasures.Model.FriendRequest;
 import com.example.hiddentreasures.Model.User;
-import com.example.hiddentreasures.Utils.Util;
 import com.google.firebase.database.*;
 
 import java.util.ArrayList;
@@ -196,6 +195,42 @@ public class SocialFragment extends Fragment {
         requestList.setAdapter(new FriendRequestAdapter(getActivity(), user.getFriendRequests()));
     }
 
+    private String getTimeDifferenceText(long oldTime) {
+
+        long currentTime = System.currentTimeMillis();
+        long difference = currentTime - oldTime;
+
+        long years = difference / ((long) 365 * 24 * 60 * 60 * 1000);
+        long months = difference / ((long) 30 * 24 * 60 * 60 * 1000);
+        long weeks = difference / (7 * 24 * 60 * 60 * 1000);
+        long days = difference / (24 * 60 * 60 * 1000);
+        long hours = difference / (60 * 60 * 1000);
+        long minutes = difference / (60 * 1000);
+
+        if (years > 0) {
+
+            return years + " years(s) ago";
+        } else if (months > 0) {
+
+            return months + " month(s) ago";
+        } else if (weeks > 0) {
+
+            return weeks + " week(s) ago";
+        } else if (days > 0) {
+
+            return days + " day(s) ago";
+        } else if (hours > 0) {
+
+            return hours + " hour(s) ago";
+        } else if (minutes > 0) {
+
+            return minutes + " minute(s) ago";
+        } else {
+
+            return "Just now";
+        }
+    }
+
     /**
      * Custom adapter for friendList ListView
      */
@@ -271,7 +306,7 @@ public class SocialFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     final User friend = dataSnapshot.child(friends.get(index)).getValue(User.class);
 
-                    String lastSeenText = Util.getTimeDifferenceText(friend.getLastSeen());
+                    String lastSeenText = getTimeDifferenceText(friend.getLastSeen());
 
                     holder.usernameText.setText(friend.getUsername());
                     holder.lastSeenText.setText(lastSeenText);
@@ -297,133 +332,6 @@ public class SocialFragment extends Fragment {
 
             TextView usernameText;
             TextView lastSeenText;
-        }
-    }
-
-    /**
-     * Structure to hold all of the components of a list element
-     */
-    class FriendRequestAdapter extends BaseAdapter {
-
-        int count;
-        Context context;
-        private LayoutInflater layoutInflater;
-        private ArrayList<FriendRequest> friendRequests = new ArrayList<>();
-
-        /**
-         * Constructor
-         *
-         * @param context        current application context
-         * @param friendRequests list of friend requests the user has received
-         */
-        public FriendRequestAdapter(Context context, ArrayList<FriendRequest> friendRequests) {
-
-            this.context = context;
-            this.friendRequests.addAll(friendRequests);
-            layoutInflater = LayoutInflater.from(context);
-            count = friendRequests.size();
-        }
-
-        /**
-         * @return number of elements there will be in ListView
-         */
-        @Override
-        public int getCount() {
-            return count;
-        }
-
-        /**
-         * @param i index of object
-         * @return username at index i
-         */
-        @Override
-        public Object getItem(int i) {
-            return friendRequests.get(i);
-        }
-
-        /**
-         * Required method in order to be subclass of BaseAdapter
-         */
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        /**
-         * Configures element of ListView
-         *
-         * @param i         index of element in ListView
-         * @param view      view of the element in index i
-         * @param viewGroup the ListView
-         * @return the view of the configured element in the ListView
-         */
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-
-            if (view != null)
-                return view;
-
-            final View thisView = layoutInflater.inflate(R.layout.requests_list_element, null);
-            final FriendRequestHolder holder = new FriendRequestHolder();
-            final FriendRequest request = friendRequests.get(i);
-
-            holder.usernameText = thisView.findViewById(R.id.usernameText);
-            holder.timeReceivedText = thisView.findViewById(R.id.timeReceivedText);
-            holder.btnAccept = thisView.findViewById(R.id.btnAccept);
-            holder.btnDelete = thisView.findViewById(R.id.btnDelete);
-
-            holder.usernameText.setText(request.getUsername());
-            holder.timeReceivedText.setText(Util.getTimeDifferenceText(request.getTime()));
-
-            users.addListenerForSingleValueEvent(new ValueEventListener() {
-
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                    User requestSender = dataSnapshot.child(request.getUsername()).getValue(User.class);
-
-                    holder.btnAccept.setOnClickListener(v -> {
-
-                        user.acceptFriendRequest(friendRequests.get(i));
-                        requestSender.addFriend(user.getUsername());
-
-                        users.child(user.getUsername()).setValue(user);
-                        users.child(requestSender.getUsername()).setValue(requestSender);
-
-                        updateViews();
-
-                    });
-
-                    holder.btnDelete.setOnClickListener(v -> {
-
-                        user.removeFriendRequest(friendRequests.get(i));
-                        users.child(user.getUsername()).setValue(user);
-
-                        updateViews();
-
-                    });
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-            });
-
-            thisView.setTag(holder);
-            view = thisView;
-
-            return view;
-        }
-
-        /**
-         * Structure for holding all components of a list element
-         */
-        class FriendRequestHolder {
-            TextView usernameText;
-            TextView timeReceivedText;
-            Button btnAccept;
-            Button btnDelete;
         }
     }
 
@@ -615,6 +523,133 @@ public class SocialFragment extends Fragment {
             TextView usernameText;
             Button updateFriendStatus;
             TextView requestStatusText;
+        }
+    }
+
+    /**
+     * Structure to hold all of the components of a list element
+     */
+    class FriendRequestAdapter extends BaseAdapter {
+
+        int count;
+        Context context;
+        private LayoutInflater layoutInflater;
+        private ArrayList<FriendRequest> friendRequests = new ArrayList<>();
+
+        /**
+         * Constructor
+         *
+         * @param context        current application context
+         * @param friendRequests list of friend requests the user has received
+         */
+        public FriendRequestAdapter(Context context, ArrayList<FriendRequest> friendRequests) {
+
+            this.context = context;
+            this.friendRequests.addAll(friendRequests);
+            layoutInflater = LayoutInflater.from(context);
+            count = friendRequests.size();
+        }
+
+        /**
+         * @return number of elements there will be in ListView
+         */
+        @Override
+        public int getCount() {
+            return count;
+        }
+
+        /**
+         * @param i index of object
+         * @return username at index i
+         */
+        @Override
+        public Object getItem(int i) {
+            return friendRequests.get(i);
+        }
+
+        /**
+         * Required method in order to be subclass of BaseAdapter
+         */
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        /**
+         * Configures element of ListView
+         *
+         * @param i         index of element in ListView
+         * @param view      view of the element in index i
+         * @param viewGroup the ListView
+         * @return the view of the configured element in the ListView
+         */
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+
+            if (view != null)
+                return view;
+
+            final View thisView = layoutInflater.inflate(R.layout.requests_list_element, null);
+            final FriendRequestHolder holder = new FriendRequestHolder();
+            final FriendRequest request = friendRequests.get(i);
+
+            holder.usernameText = thisView.findViewById(R.id.usernameText);
+            holder.timeReceivedText = thisView.findViewById(R.id.timeReceivedText);
+            holder.btnAccept = thisView.findViewById(R.id.btnAccept);
+            holder.btnDelete = thisView.findViewById(R.id.btnDelete);
+
+            holder.usernameText.setText(request.getUsername());
+            holder.timeReceivedText.setText(getTimeDifferenceText(request.getTime()));
+
+            users.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    User requestSender = dataSnapshot.child(request.getUsername()).getValue(User.class);
+
+                    holder.btnAccept.setOnClickListener(v -> {
+
+                        user.acceptFriendRequest(friendRequests.get(i));
+                        requestSender.addFriend(user.getUsername());
+
+                        users.child(user.getUsername()).setValue(user);
+                        users.child(requestSender.getUsername()).setValue(requestSender);
+
+                        updateViews();
+
+                    });
+
+                    holder.btnDelete.setOnClickListener(v -> {
+
+                        user.removeFriendRequest(friendRequests.get(i));
+                        users.child(user.getUsername()).setValue(user);
+
+                        updateViews();
+
+                    });
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+
+            thisView.setTag(holder);
+            view = thisView;
+
+            return view;
+        }
+
+        /**
+         * Structure for holding all components of a list element
+         */
+        class FriendRequestHolder {
+            TextView usernameText;
+            TextView timeReceivedText;
+            Button btnAccept;
+            Button btnDelete;
         }
     }
 

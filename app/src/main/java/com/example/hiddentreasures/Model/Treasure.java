@@ -12,16 +12,18 @@ public class Treasure implements ClusterItem {
     private double latitude;
     private double longitude;
     private Rarity rarity;
+    private int id;
 
     //Default Constructor
     public Treasure() {
 
     }
 
-    public Treasure(double latitude, double longitude, Rarity rarity) {
+    public Treasure(double latitude, double longitude, Rarity rarity, int id) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.rarity = rarity;
+        this.id = id;
     }
 
     public double getLatitude() {
@@ -32,6 +34,14 @@ public class Treasure implements ClusterItem {
         return longitude;
     }
 
+    public Rarity getRarity() {
+        return rarity;
+    }
+
+    public int getId() {
+        return id;
+    }
+
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
@@ -40,16 +50,12 @@ public class Treasure implements ClusterItem {
         this.longitude = longitude;
     }
 
-    public Rarity getRarity() {
-        return rarity;
-    }
-
     public void setRarity(Rarity rarity) {
         this.rarity = rarity;
     }
 
-    public String toString() {
-        return "Lat: " + latitude + "  Long: " + longitude;
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
@@ -66,4 +72,5 @@ public class Treasure implements ClusterItem {
     public String getSnippet() {
         return null;
     }
+
 }

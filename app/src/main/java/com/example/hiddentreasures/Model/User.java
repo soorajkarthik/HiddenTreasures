@@ -4,6 +4,7 @@ package com.example.hiddentreasures.Model;
 //ONLY ALLOW USERS TO ADD TO THINGS THEY HAVE FOUND IF THEY ARE WITHIN 50 FEET OF IT
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class User implements Comparable {
 
@@ -13,6 +14,7 @@ public class User implements Comparable {
     private long dateJoined;
     private long lastSeen;
 
+    private HashSet<Integer> foundTreasureIDs;
     private ArrayList<String> friendList;
     private ArrayList<FriendRequest> friendRequests;
 
