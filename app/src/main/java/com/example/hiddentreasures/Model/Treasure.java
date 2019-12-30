@@ -3,15 +3,11 @@ package com.example.hiddentreasures.Model;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
-enum Rarity {
-    COMMON, UNCOMMON, RARE, ULTRA_RARE, LEGENDARY
-}
-
 public class Treasure implements ClusterItem {
 
     private double latitude;
     private double longitude;
-    private Rarity rarity;
+    private String rarity;
     private int id;
 
     //Default Constructor
@@ -19,7 +15,7 @@ public class Treasure implements ClusterItem {
 
     }
 
-    public Treasure(double latitude, double longitude, Rarity rarity, int id) {
+    public Treasure(double latitude, double longitude, String rarity, int id) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.rarity = rarity;
@@ -34,7 +30,7 @@ public class Treasure implements ClusterItem {
         return longitude;
     }
 
-    public Rarity getRarity() {
+    public String getRarity() {
         return rarity;
     }
 
@@ -50,7 +46,7 @@ public class Treasure implements ClusterItem {
         this.longitude = longitude;
     }
 
-    public void setRarity(Rarity rarity) {
+    public void setRarity(String rarity) {
         this.rarity = rarity;
     }
 

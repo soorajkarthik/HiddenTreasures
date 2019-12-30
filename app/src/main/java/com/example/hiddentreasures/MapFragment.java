@@ -34,27 +34,20 @@ public class MapFragment extends Fragment {
 
     private FirebaseDatabase database;
     private DatabaseReference treasures;
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private String username;
     private User user;
     private View view;
     private MapView mapView;
     private GoogleMap mGoogleMap;
     private List<Treasure> treasureList;
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     private ClusterManager<Treasure> clusterManager;
     private boolean initialCameraLocationSet;
     private LocationRequest locationRequest;
     private Location currentLocation;
     private FusedLocationProviderClient fusedLocationClient;
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mapView = view.findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
-    }
-
+    private DatabaseReference users;
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -76,6 +69,7 @@ public class MapFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         database = FirebaseDatabase.getInstance();
         treasures = database.getReference("Treasures");
+        users = database.getReference("Users");
         user = ((MainActivity) getActivity()).getUser();
         username = user.getUsername();
         treasureList = new ArrayList<>();
@@ -102,6 +96,13 @@ public class MapFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mapView = view.findViewById(R.id.mapView);
+        mapView.onCreate(savedInstanceState);
+    }
+
     private void loadMap() {
 
         mapView.getMapAsync(googleMap -> {
@@ -124,6 +125,10 @@ public class MapFragment extends Fragment {
 
                 float distance = currentLocation.distanceTo(temp);
 
+                if (distance <= 10000000L && !user.getTreasuresFoundTodayIDs().contains(treasure.getId())) {
+                    user.addFoundTreasure(treasure);
+                    users.child(username).setValue(user);
+                }
 
                 return false;
             });

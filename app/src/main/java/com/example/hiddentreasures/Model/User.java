@@ -4,7 +4,7 @@ package com.example.hiddentreasures.Model;
 //ONLY ALLOW USERS TO ADD TO THINGS THEY HAVE FOUND IF THEY ARE WITHIN 50 FEET OF IT
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 
 public class User implements Comparable {
 
@@ -14,13 +14,24 @@ public class User implements Comparable {
     private long dateJoined;
     private long lastSeen;
 
-    private HashSet<Integer> foundTreasureIDs;
     private ArrayList<String> friendList;
     private ArrayList<FriendRequest> friendRequests;
+    private ArrayList<Integer> treasuresFoundTodayIDs;
+    private HashMap<String, Integer> foundTreasures;
 
     public User() {
         friendList = new ArrayList<>();
         friendRequests = new ArrayList<>();
+        treasuresFoundTodayIDs = new ArrayList<>();
+        foundTreasures = new HashMap<String, Integer>() {{
+            put("COMMON", 0);
+            put("UNCOMMON", 0);
+            put("RARE", 0);
+            put("ULTRA_RARE", 0);
+            put("LEGENDARY", 0);
+        }};
+
+
     }
 
     public User(String email, String userName, String password, long dateJoined) {
@@ -28,6 +39,17 @@ public class User implements Comparable {
         this.username = userName;
         this.password = password;
         this.dateJoined = dateJoined;
+
+        friendList = new ArrayList<>();
+        friendRequests = new ArrayList<>();
+        treasuresFoundTodayIDs = new ArrayList<>();
+        foundTreasures = new HashMap<String, Integer>() {{
+            put("COMMON", 0);
+            put("UNCOMMON", 0);
+            put("RARE", 0);
+            put("ULTRA_RARE", 0);
+            put("LEGENDARY", 0);
+        }};
     }
 
     public String getUsername() {
@@ -83,7 +105,6 @@ public class User implements Comparable {
         return friendList.contains(username);
     }
 
-
     public void addFriend(String username) {
         friendList.add(username);
     }
@@ -100,6 +121,19 @@ public class User implements Comparable {
         return friendList;
     }
 
+    public ArrayList<Integer> getTreasuresFoundTodayIDs() {
+        return treasuresFoundTodayIDs;
+    }
+
+    public HashMap<String, Integer> getFoundTreasures() {
+        return foundTreasures;
+    }
+
+    public void addFoundTreasure(Treasure treasure) {
+        treasuresFoundTodayIDs.add(treasure.getId());
+        foundTreasures.put(treasure.getRarity(), foundTreasures.get(treasure.getRarity()) + 1);
+    }
+
     public long getLastSeen() {
         return lastSeen;
     }
@@ -110,8 +144,16 @@ public class User implements Comparable {
 
     public int calculateScore() {
 
-        //add logic to calculate score
-        return -1;
+        int score = 0;
+
+        score += foundTreasures.get("COMMON") * 100;
+        score += foundTreasures.get("UNCOMMON") * 200;
+        score += foundTreasures.get("RARE") * 300;
+        score += foundTreasures.get("ULTRA_RARE") * 400;
+        score += foundTreasures.get("LEGENDARY") * 500;
+
+        return score;
+
     }
 
     @Override
