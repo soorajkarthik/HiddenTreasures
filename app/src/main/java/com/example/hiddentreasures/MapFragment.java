@@ -2,8 +2,10 @@ package com.example.hiddentreasures;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
@@ -23,12 +25,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.*;
 import com.google.firebase.database.*;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.algo.GridBasedAlgorithm;
+import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
@@ -38,6 +38,7 @@ import java.util.List;
 public class MapFragment extends Fragment {
 
     private FirebaseDatabase database;
+    private DatabaseReference users;
     private DatabaseReference treasures;
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private String username;
@@ -52,7 +53,7 @@ public class MapFragment extends Fragment {
     private LocationRequest locationRequest;
     private Location currentLocation;
     private FusedLocationProviderClient fusedLocationClient;
-    private DatabaseReference users;
+    private Circle currentDrawnCircle;
 
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
@@ -109,6 +110,7 @@ public class MapFragment extends Fragment {
         mapView.onCreate(savedInstanceState);
     }
 
+    @SuppressLint("NewApi")
     private void loadMap() {
 
         mapView.getMapAsync(googleMap -> {
@@ -120,36 +122,8 @@ public class MapFragment extends Fragment {
             mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
             clusterManager = new ClusterManager<>(getContext(), mGoogleMap);
-            clusterManager.setAlgorithm(new GridBasedAlgorithm<>());
-            treasureList.forEach(treasure -> clusterManager.addItem(treasure));
+            clusterManager.setAlgorithm(new NonHierarchicalDistanceBasedAlgorithm<>());
             clusterManager.setAnimation(false);
-
-            clusterManager.setOnClusterItemClickListener(treasure -> {
-
-                Location temp = new Location("");
-                temp.setLatitude(treasure.getLatitude());
-                temp.setLongitude(treasure.getLongitude());
-
-                float distance = currentLocation.distanceTo(temp);
-
-                if (distance <= 10000000L && !user.getTreasuresFoundTodayIDs().contains(treasure.getId())) {
-                    user.addFoundTreasure(treasure);
-                    users.child(username).setValue(user);
-
-                    clusterManager.removeItem(treasure);
-                    clusterManager.addItem(treasure);
-
-
-                    new AlertDialog.Builder(getContext())
-                            .setTitle("Congratulations!\nYou found a " + treasure.getRarity() + " treasure!")
-                            .setNegativeButton("OK", ((dialog, which) -> Toast.makeText(getContext(), "Keep Exploring!", Toast.LENGTH_LONG).show()))
-                            .create()
-                            .show();
-
-                }
-
-                return false;
-            });
 
             clusterManager.setRenderer(new DefaultClusterRenderer<Treasure>(getContext(), mGoogleMap, clusterManager) {
 
@@ -162,23 +136,74 @@ public class MapFragment extends Fragment {
                     if (user.getTreasuresFoundTodayIDs().contains(item.getId())) {
                         iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_found));
                         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()));
+                        markerOptions.flat(true);
                     } else {
                         iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure));
                         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()));
+                        markerOptions.flat(true);
                     }
                 }
 
+                @Override
+                public void onRemove() {
+                    super.onRemove();
+                }
             });
+
+
+            clusterManager.setOnClusterItemClickListener(treasure -> {
+
+                Location temp = new Location("");
+                temp.setLatitude(treasure.getLatitude());
+                temp.setLongitude(treasure.getLongitude());
+
+                float distance = currentLocation.distanceTo(temp);
+
+                if (currentDrawnCircle != null)
+                    currentDrawnCircle.remove();
+
+                if (distance <= 25000 && !user.getTreasuresFoundTodayIDs().contains(treasure.getId())) {
+                    user.addFoundTreasure(treasure);
+                    users.child(username).setValue(user);
+
+                    mGoogleMap.clear();
+                    mGoogleMap.moveCamera(CameraUpdateFactory.zoomTo(11.5f));
+                    clusterManager.cluster();
+
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Congratulations!\nYou found a " + treasure.getRarity() + " treasure!")
+                            .setNegativeButton("OK", ((dialog, which) -> Toast.makeText(getContext(), "Keep Exploring!", Toast.LENGTH_LONG).show()))
+                            .create()
+                            .show();
+
+                } else if (!user.getTreasuresFoundTodayIDs().contains(treasure.getId())) {
+
+                    currentDrawnCircle = mGoogleMap
+                            .addCircle(new CircleOptions()
+                                    .radius(250)
+                                    .center(treasure.getPosition())
+                                    .clickable(false)
+                                    .fillColor(Color.argb(0.5f, 0, 89, 117)));
+                }
+
+                return false;
+            });
+
+            treasureList.forEach(treasure -> clusterManager.addItem(treasure));
 
             mGoogleMap.setOnCameraIdleListener(clusterManager);
             mGoogleMap.setOnMarkerClickListener(clusterManager);
             mGoogleMap.setMinZoomPreference(11.5f);
 
+            mGoogleMap.setOnMapClickListener(latLng -> {
+                if (currentDrawnCircle != null)
+                    currentDrawnCircle.remove();
+            });
+
             locationRequest = new LocationRequest();
             locationRequest.setInterval(5000); // five second interval
             locationRequest.setFastestInterval(1000);
             locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
 
             if (ContextCompat.checkSelfPermission(getContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION)
