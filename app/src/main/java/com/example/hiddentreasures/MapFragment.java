@@ -162,7 +162,7 @@ public class MapFragment extends Fragment {
                 if (currentDrawnCircle != null)
                     currentDrawnCircle.remove();
 
-                if (distance <= 25000 && !user.getTreasuresFoundTodayIDs().contains(treasure.getId())) {
+                if (distance <= 250 && !user.getTreasuresFoundTodayIDs().contains(treasure.getId())) {
                     user.addFoundTreasure(treasure);
                     users.child(username).setValue(user);
 
