@@ -43,6 +43,30 @@ public class SocialFragment extends Fragment {
         friendList = view.findViewById(R.id.friendList);
         friendList.setAdapter(new FriendListAdapter(getActivity(), user.getFriendList()));
 
+        friendList.setOnItemClickListener((parent, clickedView, position, id) -> {
+
+            users.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    User friend = dataSnapshot.child(user.getFriendList().get(position)).getValue(User.class);
+                    new AlertDialog.Builder(getContext())
+                            .setTitle(user.getFriendList().get((position)))
+                            .setMessage(friend.scoreSummary())
+                            .setNegativeButton("OK", (dialog, which) -> {
+                            })
+                            .create()
+                            .show();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        });
+
         searchList = view.findViewById(R.id.userSearchList);
 
         return view;
@@ -183,13 +207,6 @@ public class SocialFragment extends Fragment {
         searchList.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * @return the view corresponding to this fragment
-     */
-    public View getMyView() {
-        return view;
-    }
-
     public void updateViews() {
         friendList.setAdapter(new FriendListAdapter(getActivity(), user.getFriendList()));
         requestList.setAdapter(new FriendRequestAdapter(getActivity(), user.getFriendRequests()));
@@ -229,6 +246,10 @@ public class SocialFragment extends Fragment {
 
             return "Just now";
         }
+    }
+
+    enum RequestType {
+        SENT, ACCEPTED, NONE
     }
 
     /**
@@ -297,9 +318,9 @@ public class SocialFragment extends Fragment {
             final View thisView = layoutInflater.inflate(R.layout.friends_list_element, null);
             final FriendListHolder holder = new FriendListHolder();
 
-            holder.lastSeenText = thisView.findViewById(R.id.lastSeenText);
             holder.usernameText = thisView.findViewById(R.id.usernameText);
-
+            holder.scoreText = thisView.findViewById(R.id.scoreText);
+            holder.lastSeenText = thisView.findViewById(R.id.lastSeenText);
 
             users.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -309,6 +330,7 @@ public class SocialFragment extends Fragment {
                     String lastSeenText = getTimeDifferenceText(friend.getLastSeen());
 
                     holder.usernameText.setText(friend.getUsername());
+                    holder.scoreText.setText(friend.calculateScore() + "");
                     holder.lastSeenText.setText(lastSeenText);
 
                 }
@@ -331,198 +353,9 @@ public class SocialFragment extends Fragment {
         class FriendListHolder {
 
             TextView usernameText;
+            TextView scoreText;
             TextView lastSeenText;
-        }
-    }
 
-    enum RequestType {
-        sent, accepted, none
-    }
-
-    /**
-     * Custom adapter for searchResults ListView
-     */
-    class UserSearchAdapter extends BaseAdapter {
-
-        int count;
-        Context context;
-        private LayoutInflater layoutInflater;
-        private ArrayList<String> filteredUsernameList;
-
-        /**
-         * Constructor
-         *
-         * @param context              current application context
-         * @param filteredUsernameList filtered search results
-         */
-        public UserSearchAdapter(Context context, ArrayList<String> filteredUsernameList) {
-
-            layoutInflater = LayoutInflater.from(context);
-            this.filteredUsernameList = new ArrayList<>();
-            this.filteredUsernameList.addAll(filteredUsernameList);
-            this.count = filteredUsernameList.size();
-            this.context = context;
-        }
-
-        /**
-         * @return number of elements there will be in ListView
-         */
-        @Override
-        public int getCount() {
-            return count;
-        }
-
-        /**
-         * @param i index of object
-         * @return username at index i
-         */
-        @Override
-        public Object getItem(int i) {
-            return filteredUsernameList.get(i);
-        }
-
-        /**
-         * Required method in order to be subclass of BaseAdapter
-         */
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        /**
-         * Configures element of ListView
-         *
-         * @param i         index of element in ListView
-         * @param view      view of the element in index i
-         * @param viewGroup the ListView
-         * @return the view of the configured element in the ListView
-         */
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-
-            View thisView = layoutInflater.inflate(R.layout.user_search_list_element, null);
-            FriendSearchHolder holder = new FriendSearchHolder();
-            holder.usernameText = thisView.findViewById(R.id.usernameText);
-            holder.requestStatusText = thisView.findViewById(R.id.requestStatusText);
-            holder.updateFriendStatus = thisView.findViewById(R.id.updateFriendStatus);
-
-
-            users.addListenerForSingleValueEvent(new ValueEventListener() {
-
-                /**
-                 * Checks to see if user has sent/is a friend of searchedUser
-                 * If user is a friend, allow them to remove the searchedUser from their friend list
-                 * If user has already sent a friend request, allow them to cancel the request
-                 * If neither, allow user to send the searchedUser a friend request
-                 * @param dataSnapshot snapshot of the Users node in its current state
-                 */
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                    final User searchedUser = dataSnapshot.child(filteredUsernameList.get(i)).getValue(User.class);
-                    final RequestType requestType;
-
-                    holder.usernameText.setText(searchedUser.getUsername());
-
-                    if (searchedUser.hasFriendRequestFromUser(username)) {
-
-                        holder.requestStatusText.setText("Requested");
-                        holder.updateFriendStatus.setText("Cancel");
-                        requestType = RequestType.sent;
-                    } else if (user.isFriendOfUser(searchedUser.getUsername())) {
-
-                        holder.requestStatusText.setText("Accepted");
-                        holder.updateFriendStatus.setText("Remove");
-                        requestType = RequestType.accepted;
-                    } else {
-
-                        holder.requestStatusText.setText("None");
-                        holder.updateFriendStatus.setText("Request");
-                        requestType = RequestType.none;
-                    }
-
-                    switch (requestType) {
-                        case sent:
-
-                            holder.updateFriendStatus.setOnClickListener(new View.OnClickListener() {
-
-                                /**
-                                 * Cancels friend request send to searchedUser
-                                 * @param view view of the clicked button
-                                 */
-                                @Override
-                                public void onClick(View view) {
-
-                                    searchedUser.removeFriendRequestFromUser(username);
-                                    users.child(searchedUser.getUsername()).setValue(searchedUser);
-                                    searchForUsers(searchView.getQuery().toString());
-                                }
-                            });
-
-                            break;
-
-                        case accepted:
-
-                            holder.updateFriendStatus.setOnClickListener(new View.OnClickListener() {
-
-                                /**
-                                 * Removes searchedUser from friendList
-                                 * @param view view of the clicked button
-                                 */
-                                @Override
-                                public void onClick(View view) {
-                                    user.removeFriend(searchedUser.getUsername());
-                                    searchedUser.removeFriend(username);
-
-                                    users.child(searchedUser.getUsername()).setValue(searchedUser);
-                                    users.child(username).setValue(user);
-                                    searchForUsers(searchView.getQuery().toString());
-                                    friendList.setAdapter(new FriendListAdapter(getActivity(), user.getFriendList()));
-                                }
-                            });
-
-                            break;
-
-                        case none:
-
-                            holder.updateFriendStatus.setOnClickListener(new View.OnClickListener() {
-
-                                /**
-                                 * Sends friend request send to searchedUser
-                                 * @param view view of the clicked button
-                                 */
-                                @Override
-                                public void onClick(View view) {
-
-                                    searchedUser.addFriendRequest(new FriendRequest(System.currentTimeMillis(), username));
-                                    users.child(searchedUser.getUsername()).setValue(searchedUser);
-                                    searchForUsers(searchView.getQuery().toString());
-                                }
-                            });
-
-                            break;
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-            });
-
-            thisView.setTag(holder);
-            view = thisView;
-
-            return view;
-        }
-
-        /**
-         * Structure for holding all components of a list element
-         */
-        class FriendSearchHolder {
-
-            TextView usernameText;
-            Button updateFriendStatus;
-            TextView requestStatusText;
         }
     }
 
@@ -653,5 +486,191 @@ public class SocialFragment extends Fragment {
         }
     }
 
+    /**
+     * Custom adapter for searchResults ListView
+     */
+    class UserSearchAdapter extends BaseAdapter {
+
+        int count;
+        Context context;
+        private LayoutInflater layoutInflater;
+        private ArrayList<String> filteredUsernameList;
+
+        /**
+         * Constructor
+         *
+         * @param context              current application context
+         * @param filteredUsernameList filtered search results
+         */
+        public UserSearchAdapter(Context context, ArrayList<String> filteredUsernameList) {
+
+            layoutInflater = LayoutInflater.from(context);
+            this.filteredUsernameList = new ArrayList<>();
+            this.filteredUsernameList.addAll(filteredUsernameList);
+            this.count = filteredUsernameList.size();
+            this.context = context;
+        }
+
+        /**
+         * @return number of elements there will be in ListView
+         */
+        @Override
+        public int getCount() {
+            return count;
+        }
+
+        /**
+         * @param i index of object
+         * @return username at index i
+         */
+        @Override
+        public Object getItem(int i) {
+            return filteredUsernameList.get(i);
+        }
+
+        /**
+         * Required method in order to be subclass of BaseAdapter
+         */
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        /**
+         * Configures element of ListView
+         *
+         * @param i         index of element in ListView
+         * @param view      view of the element in index i
+         * @param viewGroup the ListView
+         * @return the view of the configured element in the ListView
+         */
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+
+            View thisView = layoutInflater.inflate(R.layout.user_search_list_element, null);
+            FriendSearchHolder holder = new FriendSearchHolder();
+            holder.usernameText = thisView.findViewById(R.id.usernameText);
+            holder.requestStatusText = thisView.findViewById(R.id.requestStatusText);
+            holder.updateFriendStatus = thisView.findViewById(R.id.updateFriendStatus);
+
+
+            users.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                /**
+                 * Checks to see if user has SENT/is a friend of searchedUser
+                 * If user is a friend, allow them to remove the searchedUser from their friend list
+                 * If user has already SENT a friend request, allow them to cancel the request
+                 * If neither, allow user to send the searchedUser a friend request
+                 * @param dataSnapshot snapshot of the Users node in its current state
+                 */
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    final User searchedUser = dataSnapshot.child(filteredUsernameList.get(i)).getValue(User.class);
+                    final RequestType requestType;
+
+                    holder.usernameText.setText(searchedUser.getUsername());
+
+                    if (searchedUser.hasFriendRequestFromUser(username)) {
+
+                        holder.requestStatusText.setText("Requested");
+                        holder.updateFriendStatus.setText("Cancel");
+                        requestType = RequestType.SENT;
+                    } else if (user.isFriendOfUser(searchedUser.getUsername())) {
+
+                        holder.requestStatusText.setText("Accepted");
+                        holder.updateFriendStatus.setText("Remove");
+                        requestType = RequestType.ACCEPTED;
+                    } else {
+
+                        holder.requestStatusText.setText("None");
+                        holder.updateFriendStatus.setText("Request");
+                        requestType = RequestType.NONE;
+                    }
+
+                    switch (requestType) {
+                        case SENT:
+
+                            holder.updateFriendStatus.setOnClickListener(new View.OnClickListener() {
+
+                                /**
+                                 * Cancels friend request send to searchedUser
+                                 * @param view view of the clicked button
+                                 */
+                                @Override
+                                public void onClick(View view) {
+
+                                    searchedUser.removeFriendRequestFromUser(username);
+                                    users.child(searchedUser.getUsername()).setValue(searchedUser);
+                                    searchForUsers(searchView.getQuery().toString());
+                                }
+                            });
+
+                            break;
+
+                        case ACCEPTED:
+
+                            holder.updateFriendStatus.setOnClickListener(new View.OnClickListener() {
+
+                                /**
+                                 * Removes searchedUser from friendList
+                                 * @param view view of the clicked button
+                                 */
+                                @Override
+                                public void onClick(View view) {
+                                    user.removeFriend(searchedUser.getUsername());
+                                    searchedUser.removeFriend(username);
+
+                                    users.child(searchedUser.getUsername()).setValue(searchedUser);
+                                    users.child(username).setValue(user);
+                                    searchForUsers(searchView.getQuery().toString());
+                                    friendList.setAdapter(new FriendListAdapter(getActivity(), user.getFriendList()));
+                                }
+                            });
+
+                            break;
+
+                        case NONE:
+
+                            holder.updateFriendStatus.setOnClickListener(new View.OnClickListener() {
+
+                                /**
+                                 * Sends friend request send to searchedUser
+                                 * @param view view of the clicked button
+                                 */
+                                @Override
+                                public void onClick(View view) {
+
+                                    searchedUser.addFriendRequest(new FriendRequest(System.currentTimeMillis(), username));
+                                    users.child(searchedUser.getUsername()).setValue(searchedUser);
+                                    searchForUsers(searchView.getQuery().toString());
+                                }
+                            });
+
+                            break;
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+
+            thisView.setTag(holder);
+            view = thisView;
+
+            return view;
+        }
+
+        /**
+         * Structure for holding all components of a list element
+         */
+        class FriendSearchHolder {
+
+            TextView usernameText;
+            Button updateFriendStatus;
+            TextView requestStatusText;
+        }
+    }
 
 }
