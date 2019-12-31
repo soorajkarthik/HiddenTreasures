@@ -23,9 +23,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.*;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.algo.GridBasedAlgorithm;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
+import com.google.maps.android.ui.IconGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +53,7 @@ public class MapFragment extends Fragment {
     private Location currentLocation;
     private FusedLocationProviderClient fusedLocationClient;
     private DatabaseReference users;
+
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -114,8 +120,9 @@ public class MapFragment extends Fragment {
             mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
             clusterManager = new ClusterManager<>(getContext(), mGoogleMap);
+            clusterManager.setAlgorithm(new GridBasedAlgorithm<>());
             treasureList.forEach(treasure -> clusterManager.addItem(treasure));
-            clusterManager.setAnimation(true);
+            clusterManager.setAnimation(false);
 
             clusterManager.setOnClusterItemClickListener(treasure -> {
 
@@ -128,9 +135,39 @@ public class MapFragment extends Fragment {
                 if (distance <= 10000000L && !user.getTreasuresFoundTodayIDs().contains(treasure.getId())) {
                     user.addFoundTreasure(treasure);
                     users.child(username).setValue(user);
+
+                    clusterManager.removeItem(treasure);
+                    clusterManager.addItem(treasure);
+
+
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Congratulations!\nYou found a " + treasure.getRarity() + " treasure!")
+                            .setNegativeButton("OK", ((dialog, which) -> Toast.makeText(getContext(), "Keep Exploring!", Toast.LENGTH_LONG).show()))
+                            .create()
+                            .show();
+
                 }
 
                 return false;
+            });
+
+            clusterManager.setRenderer(new DefaultClusterRenderer<Treasure>(getContext(), mGoogleMap, clusterManager) {
+
+                private final IconGenerator iconGenerator = new IconGenerator(getContext());
+
+                @Override
+                protected void onBeforeClusterItemRendered(Treasure item, MarkerOptions markerOptions) {
+                    super.onBeforeClusterItemRendered(item, markerOptions);
+
+                    if (user.getTreasuresFoundTodayIDs().contains(item.getId())) {
+                        iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_found));
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()));
+                    } else {
+                        iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure));
+                        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()));
+                    }
+                }
+
             });
 
             mGoogleMap.setOnCameraIdleListener(clusterManager);
@@ -171,7 +208,7 @@ public class MapFragment extends Fragment {
                 new AlertDialog.Builder(getContext())
                         .setTitle("Location Permission Needed")
                         .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", (dialogInterface, i) -> {
+                        .setPositiveButton("OK", (dialogInterface, which) -> {
                             //Prompt the user once explanation has been shown
                             ActivityCompat.requestPermissions(getActivity(),
                                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
