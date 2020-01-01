@@ -152,12 +152,12 @@ public class User implements Comparable {
     }
 
     public String scoreSummary() {
-        return "Total Score: " + calculateScore()
-                + "\nCommon: " + foundTreasures.get("COMMON")
-                + "\nUncommon: " + foundTreasures.get("UNCOMMON")
-                + "\nRare: " + foundTreasures.get("RARE")
+        return "Total Score:  " + calculateScore()
+                + "\nCommon:     " + foundTreasures.get("COMMON")
+                + "\nUncommon:   " + foundTreasures.get("UNCOMMON")
+                + "\nRare:       " + foundTreasures.get("RARE")
                 + "\nUltra-Rare: " + foundTreasures.get("ULTRA_RARE")
-                + "\nLegendary: " + foundTreasures.get("LEGENDARY");
+                + "\nLegendary:  " + foundTreasures.get("LEGENDARY");
     }
 
     @Override
