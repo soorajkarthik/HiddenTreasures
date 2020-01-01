@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private PageAdapter pageAdapter;
+    private PagerAdapter pagerAdapter;
     private String username;
     private User user;
     private boolean isTabLayoutSetUpDone;
@@ -91,9 +91,9 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
-        pageAdapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
 
-        viewPager.setAdapter(pageAdapter);
+        viewPager.setAdapter(pagerAdapter);
         setSupportActionBar(toolbar);
 
 

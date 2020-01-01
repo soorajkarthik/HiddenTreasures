@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-public class PageAdapter extends FragmentPagerAdapter {
+public class PagerAdapter extends FragmentPagerAdapter {
 
     //Fields
     private int numOfTabs;
@@ -14,14 +14,14 @@ public class PageAdapter extends FragmentPagerAdapter {
      * @param fragmentManager FragmentManager used by the current activity
      * @param numOfTabs       number of tabs in TabLayout
      */
-    public PageAdapter(FragmentManager fragmentManager, int numOfTabs) {
+    public PagerAdapter(FragmentManager fragmentManager, int numOfTabs) {
 
         super(fragmentManager);
         this.numOfTabs = numOfTabs;
     }
 
     /**
-     * @param position current position of ViewPager that PageAdapter is attached to
+     * @param position current position of ViewPager that PagerAdapter is attached to
      * @return Fragment based on position
      */
     @Override

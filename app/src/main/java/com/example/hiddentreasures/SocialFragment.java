@@ -15,18 +15,19 @@ import com.example.hiddentreasures.Model.FriendRequest;
 import com.example.hiddentreasures.Model.User;
 import com.google.firebase.database.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class SocialFragment extends Fragment {
-
 
     private FirebaseDatabase database;
     private DatabaseReference users;
     private String username;
     private User user;
     private View view;
-    private ListView friendList, requestList, searchList;
+    private ListView friendList, requestList, leaderboardList, searchList;
     private SearchView searchView;
 
     @Override
@@ -78,7 +79,7 @@ public class SocialFragment extends Fragment {
 
         inflater.inflate(R.menu.menu_social, menu);
 
-        searchView = (SearchView) menu.getItem(1).getActionView();
+        searchView = (SearchView) menu.getItem(2).getActionView();
 
         searchView.setQueryHint("Start typing to search");
 
@@ -131,9 +132,49 @@ public class SocialFragment extends Fragment {
             requestList = inflatedView.findViewById(R.id.listView);
             requestList.setAdapter(new FriendRequestAdapter(getActivity(), user.getFriendRequests()));
 
-            builder.setView(inflatedView);
-            builder.setNegativeButton("Done", (dialog, which) -> dialog.dismiss());
-            builder.show();
+            builder.setView(inflatedView)
+                    .setNegativeButton("Done", (dialog, which) -> dialog.dismiss())
+                    .create()
+                    .show();
+        } else if (item.getItemId() == R.id.optLeaderBoard) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Leaderboard");
+            View inflatedView = LayoutInflater.from(getContext())
+                    .inflate(R.layout.list_view,
+                            (ViewGroup) this.view,
+                            false);
+
+            leaderboardList = inflatedView.findViewById(R.id.listView);
+
+            users.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    ArrayList<User> userList = new ArrayList<>();
+                    dataSnapshot.getChildren().forEach(child -> userList.add(child.getValue(User.class)));
+                    userList.sort(User::compareTo);
+                    leaderboardList.setAdapter(new LeaderboardListAdapter(getContext(), userList));
+
+                    leaderboardList.setOnItemClickListener((parent, view1, position, id) ->
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle(userList.get((position)).getUsername())
+                                    .setMessage(userList.get(position).scoreSummary())
+                                    .setNegativeButton("Ok", (dialog, which) -> {
+                                    })
+                                    .create()
+                                    .show());
+
+                    builder.setView(inflatedView)
+                            .setNegativeButton("Ok", ((dialog, which) -> dialog.dismiss()))
+                            .create()
+                            .show();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
         }
 
         return true;
@@ -145,7 +186,7 @@ public class SocialFragment extends Fragment {
      *
      * @param searchText the user's input
      */
-    public void searchForUsers(final String searchText) {
+    private void searchForUsers(final String searchText) {
 
         ArrayList<String> usernameList = new ArrayList<>();
         users.addValueEventListener(new ValueEventListener() {
@@ -172,7 +213,7 @@ public class SocialFragment extends Fragment {
      * @param searchText   the user's input
      * @param usernameList list of all usernames in Firebase
      */
-    public void updateSearchResults(String searchText, ArrayList<String> usernameList) {
+    private void updateSearchResults(String searchText, ArrayList<String> usernameList) {
 
         ArrayList<String> filteredUsernameList = new ArrayList<>();
 
@@ -193,7 +234,7 @@ public class SocialFragment extends Fragment {
      * Sets friend list visible
      * Sets search results invisible
      */
-    public void setFriendListVisible() {
+    private void setFriendListVisible() {
         friendList.setVisibility(View.VISIBLE);
         searchList.setVisibility(View.INVISIBLE);
     }
@@ -202,12 +243,12 @@ public class SocialFragment extends Fragment {
      * Sets friend list invisible
      * Sets search results visible
      */
-    public void setFriendListInvisible() {
+    private void setFriendListInvisible() {
         friendList.setVisibility(View.INVISIBLE);
         searchList.setVisibility(View.VISIBLE);
     }
 
-    public void updateViews() {
+    private void updateViews() {
         friendList.setAdapter(new FriendListAdapter(getActivity(), user.getFriendList()));
         requestList.setAdapter(new FriendRequestAdapter(getActivity(), user.getFriendRequests()));
     }
@@ -483,6 +524,103 @@ public class SocialFragment extends Fragment {
             TextView timeReceivedText;
             Button btnAccept;
             Button btnDelete;
+        }
+    }
+
+    /**
+     * Structure to hold all of the components of a list element
+     */
+    class LeaderboardListAdapter extends BaseAdapter {
+
+        int count;
+        Context context;
+        private LayoutInflater layoutInflater;
+        private ArrayList<User> userList = new ArrayList<>();
+
+        /**
+         * Constructor
+         *
+         * @param context        current application context
+         * @param friendRequests list of friend requests the user has received
+         */
+        public LeaderboardListAdapter(Context context, ArrayList<User> userList) {
+
+            this.context = context;
+            this.userList.addAll(userList);
+            layoutInflater = LayoutInflater.from(context);
+            count = userList.size();
+        }
+
+        /**
+         * @return number of elements there will be in ListView
+         */
+        @Override
+        public int getCount() {
+            return count;
+        }
+
+        /**
+         * @param i index of object
+         * @return username at index i
+         */
+        @Override
+        public Object getItem(int i) {
+            return userList.get(i);
+        }
+
+        /**
+         * Required method in order to be subclass of BaseAdapter
+         */
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        /**
+         * Configures element of ListView
+         *
+         * @param i         index of element in ListView
+         * @param view      view of the element in index i
+         * @param viewGroup the ListView
+         * @return the view of the configured element in the ListView
+         */
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+
+            if (view != null)
+                return view;
+
+            final View thisView = layoutInflater.inflate(R.layout.leaderboard_list_element, null);
+            final LeaderboardListHolder holder = new LeaderboardListHolder();
+            final User thisUser = userList.get(i);
+
+            holder.usernameText = thisView.findViewById(R.id.usernameText);
+            holder.rankText = thisView.findViewById(R.id.rankText);
+            holder.scoreText = thisView.findViewById(R.id.scoreText);
+            holder.dateJoinedText = thisView.findViewById(R.id.dateJoinedText);
+
+            holder.usernameText.setText(thisUser.getUsername());
+            holder.rankText.setText((i + 1) + "");
+            holder.scoreText.setText(thisUser.calculateScore() + "");
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+            Date date = new Date(thisUser.getDateJoined());
+            holder.dateJoinedText.setText(simpleDateFormat.format(date));
+
+            thisView.setTag(holder);
+            view = thisView;
+
+            return view;
+        }
+
+        /**
+         * Structure for holding all components of a list element
+         */
+        class LeaderboardListHolder {
+            TextView usernameText;
+            TextView scoreText;
+            TextView rankText;
+            TextView dateJoinedText;
         }
     }
 

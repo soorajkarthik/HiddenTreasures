@@ -4,6 +4,12 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+            android:id="@+id/optLeaderBoard"
+            android:icon="@drawable/ic_leaderboard"
+            android:title="Leaderboard"
+            app:showAsAction="always"/>
+
+    <item
             android:id="@+id/optFriendRequests"
             android:icon="@drawable/ic_smiley_face_white_24dp"
             android:title="Friend Requests"

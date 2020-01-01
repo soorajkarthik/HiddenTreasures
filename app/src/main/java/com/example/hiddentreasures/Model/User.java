@@ -1,8 +1,5 @@
 package com.example.hiddentreasures.Model;
 
-//EXTEND COMPARABLE THEN USE COMPARETO METHOD TO ORDER USERS IN TERMS OF HOW MANY THINGS THEY HAVE FOUND
-//ONLY ALLOW USERS TO ADD TO THINGS THEY HAVE FOUND IF THEY ARE WITHIN 50 FEET OF IT
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -30,8 +27,6 @@ public class User implements Comparable {
             put("ULTRA_RARE", 0);
             put("LEGENDARY", 0);
         }};
-
-
     }
 
     public User(String email, String userName, String password, long dateJoined) {
@@ -167,6 +162,9 @@ public class User implements Comparable {
 
     @Override
     public int compareTo(Object o) {
-        return calculateScore() - ((User) o).calculateScore();
+        int scoreDiff = ((User) o).calculateScore() - calculateScore();
+        int timeDiff = (int) (getDateJoined() - ((User) o).getDateJoined());
+
+        return scoreDiff == 0 ? timeDiff : scoreDiff;
     }
 }

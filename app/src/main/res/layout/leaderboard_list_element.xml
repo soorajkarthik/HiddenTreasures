@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <TextView
+            android:id="@+id/usernameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Username"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+            android:id="@+id/rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:text="Rank: "
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/usernameText"
+            app:layout_constraintTop_toBottomOf="@id/usernameText"/>
+
+    <TextView
+            android:id="@+id/rankText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="Rank Text"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/dateJoinedText"
+            app:layout_constraintTop_toTopOf="@id/rank"/>
+
+    <TextView
+            android:id="@+id/score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:text="Score:"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/usernameText"
+            app:layout_constraintTop_toBottomOf="@id/rank"/>
+
+    <TextView
+            android:id="@+id/scoreText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="Score Text"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/dateJoinedText"
+            app:layout_constraintTop_toTopOf="@id/score"/>
+
+    <TextView
+            android:id="@+id/dateJoined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:text="Joined:"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/usernameText"
+            app:layout_constraintTop_toBottomOf="@id/score"/>
+
+    <TextView
+            android:id="@+id/dateJoinedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="0dp"
+            android:text="Date Joined Text"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/dateJoined"
+            app:layout_constraintTop_toTopOf="@id/dateJoined"/>
+
+
+    <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dateJoined"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
