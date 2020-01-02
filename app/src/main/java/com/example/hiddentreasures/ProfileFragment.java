@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.*;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import com.example.hiddentreasures.Model.User;
@@ -33,7 +36,15 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+        ((TextView) view.findViewById(R.id.usernameText)).setText(username);
+
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
 
         inflater.inflate(R.menu.menu_profile, menu);
 

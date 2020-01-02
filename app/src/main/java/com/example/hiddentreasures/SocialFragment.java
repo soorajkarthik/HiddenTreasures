@@ -155,8 +155,8 @@ public class SocialFragment extends Fragment {
 
                     leaderboardList.setOnItemClickListener((parent, view1, position, id) ->
                             new AlertDialog.Builder(getContext())
-                                    .setTitle(userList.get((position)).getUsername())
-                                    .setMessage(user.scoreSummary())
+                                    .setTitle(userList.get(position).getUsername())
+                                    .setMessage(userList.get(position).scoreSummary())
                                     .setNegativeButton("Ok", (dialog, which) -> dialog.dismiss())
                                     .create()
                                     .show());
@@ -602,7 +602,7 @@ public class SocialFragment extends Fragment {
             holder.rankText.setText((i + 1) + "");
             holder.scoreText.setText(thisUser.calculateScore() + "");
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yy");
             Date date = new Date(thisUser.getDateJoined());
             holder.dateJoinedText.setText(simpleDateFormat.format(date));
 

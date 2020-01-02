@@ -163,7 +163,7 @@ public class User implements Comparable {
     @Override
     public int compareTo(Object o) {
         int scoreDiff = ((User) o).calculateScore() - calculateScore();
-        int timeDiff = (int) (getDateJoined() - ((User) o).getDateJoined());
+        int timeDiff = ((User) o).getDateJoined() > getDateJoined() ? 1 : -1;
 
         return scoreDiff == 0 ? timeDiff : scoreDiff;
     }

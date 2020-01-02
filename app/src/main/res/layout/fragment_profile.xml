@@ -1,15 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ProfileFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment"/>
+            android:id="@+id/usernameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="160dp"
+            android:text="Username"
+            android:textSize="25sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"/>
 
-</FrameLayout>
+    <TextView
+            android:id="@+id/dateJoined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="25dp"
+            android:text="Joined:"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintTop_toBottomOf="@id/usernameText"/>
+
+    <TextView
+            android:id="@+id/dateJoinedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="Date Joined Text"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintTop_toTopOf="@id/dateJoined"/>
+
+    <TextView
+            android:id="@+id/globalRank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:text="Global Rank:"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintTop_toBottomOf="@id/dateJoined"/>
+
+    <TextView
+            android:id="@+id/globalRankText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="Global Rank Text"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintTop_toTopOf="@id/globalRank"/>
+
+    <TextView
+            android:id="@+id/socialRank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:text="Social Rank:"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintTop_toBottomOf="@id/globalRank"/>
+
+    <TextView
+            android:id="@+id/socialRankText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="Social Rank Text"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintTop_toTopOf="@id/socialRank"/>
+
+    <TextView
+            android:id="@+id/score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Score: "
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/socialRank"
+            app:layout_constraintEnd_toStartOf="@+id/scoreText"
+            app:layout_constraintHorizontal_bias="0.5"/>
+
+    <TextView
+            android:id="@+id/scoreText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="Score Text"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintTop_toTopOf="@id/score"/>
+
+    <TextView
+            android:id="@+id/common"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:text="Common: "
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintTop_toBottomOf="@id/score"/>
+
+    <TextView
+            android:id="@+id/commonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="Common Text"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintTop_toTopOf="@id/common"/>
+
+    <TextView
+            android:id="@+id/uncommon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:text="Uncommon: "
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintTop_toBottomOf="@id/common"/>
+
+    <TextView
+            android:id="@+id/uncommonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="Uncommon Text"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintTop_toTopOf="@id/uncommon"/>
+
+    <TextView
+            android:id="@+id/rare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:text="Rare: "
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintTop_toBottomOf="@id/uncommon"/>
+
+    <TextView
+            android:id="@+id/rareText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="Rare Text"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintTop_toTopOf="@id/rare"/>
+
+    <TextView
+            android:id="@+id/ultraRare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:text="Ultra-Rare: "
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintTop_toBottomOf="@id/rare"/>
+
+    <TextView
+            android:id="@+id/ultraRareText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Ultra-Rare Text"
+            android:textSize="17sp"
+            app:layout_constraintStart_toEndOf="@+id/ultraRare"
+            app:layout_constraintTop_toTopOf="@id/ultraRare"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"/>
+
+    <TextView
+            android:id="@+id/legendary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:text="Legendary: "
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintTop_toBottomOf="@id/ultraRare"/>
+
+    <TextView
+            android:id="@+id/legendaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="Legendary Text"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintTop_toTopOf="@id/legendary"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
