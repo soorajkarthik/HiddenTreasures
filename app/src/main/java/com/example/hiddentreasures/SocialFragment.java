@@ -157,7 +157,7 @@ public class SocialFragment extends Fragment {
                     leaderboardList.setOnItemClickListener((parent, view1, position, id) ->
                             new AlertDialog.Builder(getContext())
                                     .setTitle(userList.get((position)).getUsername())
-                                    .setMessage(userList.get(position).scoreSummary())
+                                    .setMessage(user.scoreSummary())
                                     .setNegativeButton("Ok", (dialog, which) -> {
                                     })
                                     .create()
@@ -540,8 +540,8 @@ public class SocialFragment extends Fragment {
         /**
          * Constructor
          *
-         * @param context        current application context
-         * @param friendRequests list of friend requests the user has received
+         * @param context current application context
+         * @param userList list of all users in database
          */
         public LeaderboardListAdapter(Context context, ArrayList<User> userList) {
 

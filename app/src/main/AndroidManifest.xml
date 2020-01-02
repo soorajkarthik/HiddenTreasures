@@ -17,15 +17,12 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
 
-        <activity
-                android:name=".SignUpActivity"
-                android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-
-        <activity android:name=".MainActivity"/>
-
-        <activity
-                android:name=".LoginActivity"
-                android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".SignUpActivity"
+                  android:theme="@style/AppTheme"/>
+        <activity android:name=".MainActivity"
+                  android:theme="@style/AppTheme"/>
+        <activity android:name=".LoginActivity"
+                  android:theme="@style/AppTheme">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

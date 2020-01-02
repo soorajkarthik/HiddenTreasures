@@ -4,7 +4,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/source_code_pro</item>
         <item name="searchViewStyle">@style/AppTheme.SearchView</item>
+        <item name="alertDialogTheme">@style/AppTheme.AlertDialog</item>
     </style>
 
     <style name="AppTheme.SearchView" parent="Widget.AppCompat.Light.SearchView">
@@ -14,4 +16,14 @@
         <item name="android:maxWidth">10000dp</item>
     </style>
 
+    <style name="AppTheme.AlertDialog" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textAppearanceSmall">@style/AppTheme.AlertDialog.TextAppearance</item>
+        <item name="android:textAppearanceMedium">@style/AppTheme.AlertDialog.TextAppearance</item>
+        <item name="android:textAppearanceLarge">@style/AppTheme.AlertDialog.TextAppearance</item>
+        <item name="android:fontFamily">@font/source_code_pro</item>
+    </style>
+
+    <style name="AppTheme.AlertDialog.TextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/source_code_pro</item>
+    </style>
 </resources>
