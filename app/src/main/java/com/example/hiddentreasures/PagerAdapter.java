@@ -11,6 +11,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
     /**
      * Constructor
+     *
      * @param fragmentManager FragmentManager used by the current activity
      * @param numOfTabs       number of tabs in TabLayout
      */

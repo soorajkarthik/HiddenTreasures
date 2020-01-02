@@ -21,11 +21,11 @@ public class User implements Comparable {
         friendRequests = new ArrayList<>();
         treasuresFoundTodayIDs = new ArrayList<>();
         foundTreasures = new HashMap<String, Integer>() {{
-            put("COMMON", 0);
-            put("UNCOMMON", 0);
-            put("RARE", 0);
-            put("ULTRA_RARE", 0);
-            put("LEGENDARY", 0);
+            put(Treasure.COMMON, 0);
+            put(Treasure.UNCOMMON, 0);
+            put(Treasure.RARE, 0);
+            put(Treasure.ULTRA_RARE, 0);
+            put(Treasure.LEGENDARY, 0);
         }};
     }
 
@@ -39,11 +39,11 @@ public class User implements Comparable {
         friendRequests = new ArrayList<>();
         treasuresFoundTodayIDs = new ArrayList<>();
         foundTreasures = new HashMap<String, Integer>() {{
-            put("COMMON", 0);
-            put("UNCOMMON", 0);
-            put("RARE", 0);
-            put("ULTRA_RARE", 0);
-            put("LEGENDARY", 0);
+            put(Treasure.COMMON, 0);
+            put(Treasure.UNCOMMON, 0);
+            put(Treasure.RARE, 0);
+            put(Treasure.ULTRA_RARE, 0);
+            put(Treasure.LEGENDARY, 0);
         }};
     }
 
@@ -141,11 +141,11 @@ public class User implements Comparable {
 
         int score = 0;
 
-        score += foundTreasures.get("COMMON") * 100;
-        score += foundTreasures.get("UNCOMMON") * 200;
-        score += foundTreasures.get("RARE") * 300;
-        score += foundTreasures.get("ULTRA_RARE") * 400;
-        score += foundTreasures.get("LEGENDARY") * 500;
+        score += foundTreasures.get(Treasure.COMMON) * 100;
+        score += foundTreasures.get(Treasure.UNCOMMON) * 200;
+        score += foundTreasures.get(Treasure.RARE) * 300;
+        score += foundTreasures.get(Treasure.ULTRA_RARE) * 400;
+        score += foundTreasures.get(Treasure.LEGENDARY) * 500;
 
         return score;
 
@@ -153,11 +153,11 @@ public class User implements Comparable {
 
     public String scoreSummary() {
         return "Total Score:  " + calculateScore()
-                + "\nCommon:       " + foundTreasures.get("COMMON")
-                + "\nUncommon:     " + foundTreasures.get("UNCOMMON")
-                + "\nRare:         " + foundTreasures.get("RARE")
-                + "\nUltra-Rare:   " + foundTreasures.get("ULTRA_RARE")
-                + "\nLegendary:    " + foundTreasures.get("LEGENDARY");
+                + "\nCommon:       " + foundTreasures.get(Treasure.COMMON)
+                + "\nUncommon:     " + foundTreasures.get(Treasure.UNCOMMON)
+                + "\nRare:         " + foundTreasures.get(Treasure.RARE)
+                + "\nUltra-Rare:   " + foundTreasures.get(Treasure.ULTRA_RARE)
+                + "\nLegendary:    " + foundTreasures.get(Treasure.LEGENDARY);
     }
 
     @Override

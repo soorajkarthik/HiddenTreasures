@@ -54,8 +54,7 @@ public class SocialFragment extends Fragment {
                     new AlertDialog.Builder(getContext())
                             .setTitle(user.getFriendList().get((position)))
                             .setMessage(friend.scoreSummary())
-                            .setNegativeButton("OK", (dialog, which) -> {
-                            })
+                            .setNegativeButton("OK", (dialog, which) -> dialog.dismiss())
                             .create()
                             .show();
                 }
@@ -122,8 +121,7 @@ public class SocialFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.optFriendRequests) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Friend Requests");
+
             View inflatedView = LayoutInflater.from(getContext())
                     .inflate(R.layout.list_view,
                             (ViewGroup) this.view,
@@ -132,13 +130,14 @@ public class SocialFragment extends Fragment {
             requestList = inflatedView.findViewById(R.id.listView);
             requestList.setAdapter(new FriendRequestAdapter(getActivity(), user.getFriendRequests()));
 
-            builder.setView(inflatedView)
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Friend Requests")
+                    .setView(inflatedView)
                     .setNegativeButton("Done", (dialog, which) -> dialog.dismiss())
                     .create()
                     .show();
         } else if (item.getItemId() == R.id.optLeaderBoard) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Leaderboard");
+
             View inflatedView = LayoutInflater.from(getContext())
                     .inflate(R.layout.list_view,
                             (ViewGroup) this.view,
@@ -158,15 +157,9 @@ public class SocialFragment extends Fragment {
                             new AlertDialog.Builder(getContext())
                                     .setTitle(userList.get((position)).getUsername())
                                     .setMessage(user.scoreSummary())
-                                    .setNegativeButton("Ok", (dialog, which) -> {
-                                    })
+                                    .setNegativeButton("Ok", (dialog, which) -> dialog.dismiss())
                                     .create()
                                     .show());
-
-                    builder.setView(inflatedView)
-                            .setNegativeButton("Ok", ((dialog, which) -> dialog.dismiss()))
-                            .create()
-                            .show();
                 }
 
                 @Override
@@ -175,6 +168,12 @@ public class SocialFragment extends Fragment {
                 }
             });
 
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Leaderboard")
+                    .setView(inflatedView)
+                    .setNegativeButton("Ok", ((dialog, which) -> dialog.dismiss()))
+                    .create()
+                    .show();
         }
 
         return true;
@@ -540,7 +539,7 @@ public class SocialFragment extends Fragment {
         /**
          * Constructor
          *
-         * @param context current application context
+         * @param context  current application context
          * @param userList list of all users in database
          */
         public LeaderboardListAdapter(Context context, ArrayList<User> userList) {

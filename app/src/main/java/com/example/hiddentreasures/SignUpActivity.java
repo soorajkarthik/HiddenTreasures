@@ -23,6 +23,7 @@ public class SignUpActivity extends AppCompatActivity {
     /**
      * Get reference to Firebase Database, and the "Users" node
      * Get reference to all components of the activity's view
+     *
      * @param savedInstanceState the last saved state of the application
      */
     @Override

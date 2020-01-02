@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
      * If no user is currently signed on, stay on current screen
      * Get reference to Firebase Database, and the "Users" node
      * Get reference to all components of the activity's view
+     *
      * @param savedInstanceState the last saved state of the application
      */
     @Override
@@ -93,6 +94,7 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Check to see if there is a user in Firebase with the entered username and password combination
      * If there is, start MainActivity
+     *
      * @param username entered username
      * @param password entered password
      */
@@ -127,18 +129,14 @@ public class LoginActivity extends AppCompatActivity {
                         Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
                         myIntent.putExtra("username", username);
                         startActivity(myIntent);
-                    }
-
-                    else {
+                    } else {
 
                         Toast.makeText(LoginActivity.this,
                                 "Incorrect Password",
                                 Toast.LENGTH_SHORT).show();
                     }
 
-                }
-
-                else {
+                } else {
 
                     Toast.makeText(LoginActivity.this,
                             "Username not registered",

@@ -37,34 +37,31 @@ public class ProfileFragment extends Fragment {
 
         inflater.inflate(R.menu.menu_profile, menu);
 
-
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.optLogOut) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle("Confirm");
-            builder.setMessage("Are you sure you want to log out?");
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Confirm")
+                    .setMessage("Are you sure you want to log out?")
+                    .setPositiveButton("Log Out", (dialog, which) -> {
 
-            builder.setPositiveButton("Log Out", (dialog, which) -> {
+                        SharedPreferences pref = getActivity()
+                                .getApplicationContext()
+                                .getSharedPreferences("MyPref", 0);
 
-                SharedPreferences pref = getActivity()
-                        .getApplicationContext()
-                        .getSharedPreferences("MyPref", 0);
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.remove("username");
+                        editor.commit();
 
-                SharedPreferences.Editor editor = pref.edit();
-                editor.remove("username");
-                editor.commit();
-
-                Intent myIntent = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
-                startActivity(myIntent);
-            });
-
-            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-
-            builder.show();
+                        Intent myIntent = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
+                        startActivity(myIntent);
+                    })
+                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                    .create()
+                    .show();
         }
 
         return true;

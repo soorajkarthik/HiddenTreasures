@@ -37,16 +37,16 @@ import java.util.List;
 
 public class MapFragment extends Fragment {
 
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private FirebaseDatabase database;
     private DatabaseReference users;
     private DatabaseReference treasures;
-    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private String username;
     private User user;
     private View view;
     private MapView mapView;
     private GoogleMap mGoogleMap;
-    private List<Treasure> treasureList;
+    private ArrayList<Treasure> treasureList;
 
     private ClusterManager<Treasure> clusterManager;
     private boolean initialCameraLocationSet;
@@ -71,7 +71,7 @@ public class MapFragment extends Fragment {
     };
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
         database = FirebaseDatabase.getInstance();
@@ -123,7 +123,6 @@ public class MapFragment extends Fragment {
 
             clusterManager = new ClusterManager<>(getContext(), mGoogleMap);
             clusterManager.setAlgorithm(new NonHierarchicalDistanceBasedAlgorithm<>());
-            clusterManager.setAnimation(false);
 
             clusterManager.setRenderer(new DefaultClusterRenderer<Treasure>(getContext(), mGoogleMap, clusterManager) {
 
@@ -150,6 +149,7 @@ public class MapFragment extends Fragment {
                 }
             });
 
+            clusterManager.setAnimation(false);
 
             clusterManager.setOnClusterItemClickListener(treasure -> {
 
@@ -238,7 +238,6 @@ public class MapFragment extends Fragment {
                             ActivityCompat.requestPermissions(getActivity(),
                                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                     MY_PERMISSIONS_REQUEST_LOCATION);
-                            mGoogleMap.setMyLocationEnabled(true);
                         })
                         .create()
                         .show();
@@ -249,13 +248,12 @@ public class MapFragment extends Fragment {
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
-                mGoogleMap.setMyLocationEnabled(true);
             }
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {// If request is cancelled, the result arrays are empty.
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -276,7 +274,6 @@ public class MapFragment extends Fragment {
                 // functionality that depends on this permission.
                 Toast.makeText(getContext(), "permission denied", Toast.LENGTH_LONG).show();
             }
-            return;
         }
     }
 
