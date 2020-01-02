@@ -23,23 +23,23 @@
             android:id="@+id/dateJoined"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
             android:layout_marginTop="25dp"
             android:text="Joined:"
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/score"
-            app:layout_constraintTop_toBottomOf="@id/usernameText"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/usernameText" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/dateJoinedText"/>
 
     <TextView
             android:id="@+id/dateJoinedText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
+            android:layout_marginStart="16dp"
             android:text="Date Joined Text"
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/ultraRareText"
-            app:layout_constraintTop_toTopOf="@id/dateJoined"/>
+            app:layout_constraintStart_toEndOf="@+id/dateJoined"
+            app:layout_constraintTop_toTopOf="@id/dateJoined" app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
             android:id="@+id/globalRank"
@@ -49,7 +49,7 @@
             android:layout_marginTop="5dp"
             android:text="Global Rank:"
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintStart_toStartOf="@id/dateJoined"
             app:layout_constraintTop_toBottomOf="@id/dateJoined"/>
 
     <TextView
@@ -60,7 +60,7 @@
             android:layout_marginTop="0dp"
             android:text="Global Rank Text"
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintStart_toStartOf="@id/dateJoinedText"
             app:layout_constraintTop_toTopOf="@id/globalRank"/>
 
     <TextView
@@ -71,7 +71,7 @@
             android:layout_marginTop="5dp"
             android:text="Social Rank:"
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintStart_toStartOf="@id/dateJoined"
             app:layout_constraintTop_toBottomOf="@id/globalRank"/>
 
     <TextView
@@ -82,20 +82,19 @@
             android:layout_marginTop="0dp"
             android:text="Social Rank Text"
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintStart_toStartOf="@id/dateJoinedText"
             app:layout_constraintTop_toTopOf="@id/socialRank"/>
 
     <TextView
             android:id="@+id/score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
             android:layout_marginTop="5dp"
             android:text="Score: "
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/socialRank"
-            app:layout_constraintEnd_toStartOf="@+id/scoreText"
-            app:layout_constraintHorizontal_bias="0.5"/>
+            app:layout_constraintStart_toStartOf="@id/dateJoined"
+            app:layout_constraintTop_toBottomOf="@id/socialRank"/>
 
     <TextView
             android:id="@+id/scoreText"
@@ -105,7 +104,7 @@
             android:layout_marginTop="0dp"
             android:text="Score Text"
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintStart_toStartOf="@id/dateJoinedText"
             app:layout_constraintTop_toTopOf="@id/score"/>
 
     <TextView
@@ -116,7 +115,7 @@
             android:layout_marginTop="5dp"
             android:text="Common: "
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintStart_toStartOf="@id/dateJoined"
             app:layout_constraintTop_toBottomOf="@id/score"/>
 
     <TextView
@@ -127,7 +126,7 @@
             android:layout_marginTop="0dp"
             android:text="Common Text"
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintStart_toStartOf="@id/dateJoinedText"
             app:layout_constraintTop_toTopOf="@id/common"/>
 
     <TextView
@@ -138,7 +137,7 @@
             android:layout_marginTop="5dp"
             android:text="Uncommon: "
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintStart_toStartOf="@id/dateJoined"
             app:layout_constraintTop_toBottomOf="@id/common"/>
 
     <TextView
@@ -149,7 +148,7 @@
             android:layout_marginTop="0dp"
             android:text="Uncommon Text"
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintStart_toStartOf="@id/dateJoinedText"
             app:layout_constraintTop_toTopOf="@id/uncommon"/>
 
     <TextView
@@ -160,7 +159,7 @@
             android:layout_marginTop="5dp"
             android:text="Rare: "
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintStart_toStartOf="@id/dateJoined"
             app:layout_constraintTop_toBottomOf="@id/uncommon"/>
 
     <TextView
@@ -171,7 +170,7 @@
             android:layout_marginTop="0dp"
             android:text="Rare Text"
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintStart_toStartOf="@id/dateJoinedText"
             app:layout_constraintTop_toTopOf="@id/rare"/>
 
     <TextView
@@ -182,20 +181,20 @@
             android:layout_marginTop="5dp"
             android:text="Ultra-Rare: "
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintStart_toStartOf="@id/dateJoined"
             app:layout_constraintTop_toBottomOf="@id/rare"/>
 
     <TextView
             android:id="@+id/ultraRareText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
             android:text="Ultra-Rare Text"
             android:textSize="17sp"
-            app:layout_constraintStart_toEndOf="@+id/ultraRare"
-            app:layout_constraintTop_toTopOf="@id/ultraRare"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"/>
+            app:layout_constraintStart_toStartOf="@id/dateJoinedText"
+            app:layout_constraintTop_toTopOf="@id/ultraRare"/>
+
 
     <TextView
             android:id="@+id/legendary"
@@ -205,7 +204,7 @@
             android:layout_marginTop="5dp"
             android:text="Legendary: "
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/score"
+            app:layout_constraintStart_toStartOf="@id/dateJoined"
             app:layout_constraintTop_toBottomOf="@id/ultraRare"/>
 
     <TextView
@@ -216,7 +215,7 @@
             android:layout_marginTop="0dp"
             android:text="Legendary Text"
             android:textSize="17sp"
-            app:layout_constraintStart_toStartOf="@id/ultraRareText"
+            app:layout_constraintStart_toStartOf="@id/dateJoinedText"
             app:layout_constraintTop_toTopOf="@id/legendary"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

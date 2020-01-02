@@ -26,8 +26,9 @@ public class SocialFragment extends Fragment {
     private DatabaseReference users;
     private String username;
     private User user;
+    private ArrayList<User> userList, friendList;
     private View view;
-    private ListView friendList, requestList, leaderboardList, searchList;
+    private ListView friendListView, requestListView, leaderboardListView, searchListView;
     private SearchView searchView;
 
     @Override
@@ -36,42 +37,43 @@ public class SocialFragment extends Fragment {
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
         user = ((MainActivity) getActivity()).getUser();
+        userList = ((MainActivity) getActivity()).getUserList();
+        friendList = ((MainActivity) getActivity()).getFriendList();
         username = user.getUsername();
 
-        setHasOptionsMenu(true);
-        view = inflater.inflate(R.layout.fragment_social, container, false);
+        users.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                friendList.clear();
+                user.getFriendList().forEach(friendName -> friendList.add(dataSnapshot.child(friendName).getValue(User.class)));
+                friendListView.setAdapter(new FriendListAdapter(getContext(), friendList));
+            }
 
-        friendList = view.findViewById(R.id.friendList);
-        friendList.setAdapter(new FriendListAdapter(getActivity(), user.getFriendList()));
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-        friendList.setOnItemClickListener((parent, clickedView, position, id) -> {
-
-            users.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                    User friend = dataSnapshot.child(user.getFriendList().get(position)).getValue(User.class);
-                    new AlertDialog.Builder(getContext())
-                            .setTitle(user.getFriendList().get((position)))
-                            .setMessage(friend.scoreSummary())
-                            .setNegativeButton("OK", (dialog, which) -> dialog.dismiss())
-                            .create()
-                            .show();
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-
+            }
         });
 
-        searchList = view.findViewById(R.id.userSearchList);
+        view = inflater.inflate(R.layout.fragment_social, container, false);
+        friendListView = view.findViewById(R.id.friendList);
+        friendListView.setAdapter(new FriendListAdapter(getActivity(), friendList));
+        friendListView.setOnItemClickListener((parent, clickedView, position, id) -> {
+
+            User friend = friendList.get(position);
+            new AlertDialog.Builder(getContext())
+                    .setTitle(friend.getUsername())
+                    .setMessage(friend.scoreSummary())
+                    .setNegativeButton("OK", (dialog, which) -> dialog.dismiss())
+                    .create()
+                    .show();
+        });
+
+        searchListView = view.findViewById(R.id.userSearchList);
+        setHasOptionsMenu(true);
 
         return view;
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -79,9 +81,7 @@ public class SocialFragment extends Fragment {
         inflater.inflate(R.menu.menu_social, menu);
 
         searchView = (SearchView) menu.getItem(2).getActionView();
-
         searchView.setQueryHint("Start typing to search");
-
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             /**
@@ -108,7 +108,6 @@ public class SocialFragment extends Fragment {
                     setFriendListInvisible();
 
                 } else {
-
                     setFriendListVisible();
                 }
 
@@ -127,8 +126,8 @@ public class SocialFragment extends Fragment {
                             (ViewGroup) this.view,
                             false);
 
-            requestList = inflatedView.findViewById(R.id.listView);
-            requestList.setAdapter(new FriendRequestAdapter(getActivity(), user.getFriendRequests()));
+            requestListView = inflatedView.findViewById(R.id.listView);
+            requestListView.setAdapter(new FriendRequestAdapter(getActivity(), user.getFriendRequests()));
 
             new AlertDialog.Builder(getContext())
                     .setTitle("Friend Requests")
@@ -143,30 +142,16 @@ public class SocialFragment extends Fragment {
                             (ViewGroup) this.view,
                             false);
 
-            leaderboardList = inflatedView.findViewById(R.id.listView);
+            leaderboardListView = inflatedView.findViewById(R.id.listView);
+            leaderboardListView.setAdapter(new LeaderboardListAdapter(getContext(), userList));
 
-            users.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    ArrayList<User> userList = new ArrayList<>();
-                    dataSnapshot.getChildren().forEach(child -> userList.add(child.getValue(User.class)));
-                    userList.sort(User::compareTo);
-                    leaderboardList.setAdapter(new LeaderboardListAdapter(getContext(), userList));
-
-                    leaderboardList.setOnItemClickListener((parent, view1, position, id) ->
-                            new AlertDialog.Builder(getContext())
-                                    .setTitle(userList.get(position).getUsername())
-                                    .setMessage(userList.get(position).scoreSummary())
-                                    .setNegativeButton("Ok", (dialog, which) -> dialog.dismiss())
-                                    .create()
-                                    .show());
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
+            leaderboardListView.setOnItemClickListener((parent, view1, position, id) ->
+                    new AlertDialog.Builder(getContext())
+                            .setTitle(userList.get(position).getUsername())
+                            .setMessage(userList.get(position).scoreSummary())
+                            .setNegativeButton("Ok", (dialog, which) -> dialog.dismiss())
+                            .create()
+                            .show());
 
             new AlertDialog.Builder(getContext())
                     .setTitle("Leaderboard")
@@ -226,7 +211,7 @@ public class SocialFragment extends Fragment {
             }
         }
 
-        searchList.setAdapter(new UserSearchAdapter(getActivity(), filteredUsernameList));
+        searchListView.setAdapter(new UserSearchAdapter(getActivity(), filteredUsernameList));
     }
 
     /**
@@ -234,8 +219,8 @@ public class SocialFragment extends Fragment {
      * Sets search results invisible
      */
     private void setFriendListVisible() {
-        friendList.setVisibility(View.VISIBLE);
-        searchList.setVisibility(View.INVISIBLE);
+        friendListView.setVisibility(View.VISIBLE);
+        searchListView.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -243,13 +228,8 @@ public class SocialFragment extends Fragment {
      * Sets search results visible
      */
     private void setFriendListInvisible() {
-        friendList.setVisibility(View.INVISIBLE);
-        searchList.setVisibility(View.VISIBLE);
-    }
-
-    private void updateViews() {
-        friendList.setAdapter(new FriendListAdapter(getActivity(), user.getFriendList()));
-        requestList.setAdapter(new FriendRequestAdapter(getActivity(), user.getFriendRequests()));
+        friendListView.setVisibility(View.INVISIBLE);
+        searchListView.setVisibility(View.VISIBLE);
     }
 
     private String getTimeDifferenceText(long oldTime) {
@@ -300,7 +280,7 @@ public class SocialFragment extends Fragment {
         int count;
         Context context;
         private LayoutInflater layoutInflater;
-        private ArrayList<String> friends = new ArrayList<>();
+        private ArrayList<User> friends = new ArrayList<>();
 
         /**
          * Constructor
@@ -308,7 +288,7 @@ public class SocialFragment extends Fragment {
          * @param context current application context
          * @param friends user's friend list
          */
-        public FriendListAdapter(Context context, ArrayList<String> friends) {
+        public FriendListAdapter(Context context, ArrayList<User> friends) {
             layoutInflater = LayoutInflater.from(context);
             this.friends.addAll(friends);
             count = friends.size();
@@ -357,28 +337,15 @@ public class SocialFragment extends Fragment {
             final int index = i;
             final View thisView = layoutInflater.inflate(R.layout.friends_list_element, null);
             final FriendListHolder holder = new FriendListHolder();
+            final User friend = friends.get(index);
+            String lastSeenText = getTimeDifferenceText(friend.getLastSeen());
 
             holder.usernameText = thisView.findViewById(R.id.usernameText);
             holder.scoreText = thisView.findViewById(R.id.scoreText);
             holder.lastSeenText = thisView.findViewById(R.id.lastSeenText);
-
-            users.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    final User friend = dataSnapshot.child(friends.get(index)).getValue(User.class);
-
-                    String lastSeenText = getTimeDifferenceText(friend.getLastSeen());
-
-                    holder.usernameText.setText(friend.getUsername());
-                    holder.scoreText.setText(friend.calculateScore() + "");
-                    holder.lastSeenText.setText(lastSeenText);
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-            });
+            holder.usernameText.setText(friend.getUsername());
+            holder.scoreText.setText(friend.calculateScore() + "");
+            holder.lastSeenText.setText(lastSeenText);
 
             view = thisView;
             view.setTag(holder);
@@ -488,8 +455,7 @@ public class SocialFragment extends Fragment {
 
                         users.child(user.getUsername()).setValue(user);
                         users.child(requestSender.getUsername()).setValue(requestSender);
-
-                        updateViews();
+                        requestListView.setAdapter(new FriendRequestAdapter(getContext(), user.getFriendRequests()));
 
                     });
 
@@ -497,8 +463,7 @@ public class SocialFragment extends Fragment {
 
                         user.removeFriendRequest(friendRequests.get(i));
                         users.child(user.getUsername()).setValue(user);
-
-                        updateViews();
+                        requestListView.setAdapter(new FriendRequestAdapter(getContext(), user.getFriendRequests()));
 
                     });
 
@@ -593,17 +558,16 @@ public class SocialFragment extends Fragment {
             final LeaderboardListHolder holder = new LeaderboardListHolder();
             final User thisUser = userList.get(i);
 
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yy");
+            Date date = new Date(thisUser.getDateJoined());
+
             holder.usernameText = thisView.findViewById(R.id.usernameText);
             holder.rankText = thisView.findViewById(R.id.rankText);
             holder.scoreText = thisView.findViewById(R.id.scoreText);
             holder.dateJoinedText = thisView.findViewById(R.id.dateJoinedText);
-
             holder.usernameText.setText(thisUser.getUsername());
             holder.rankText.setText((i + 1) + "");
             holder.scoreText.setText(thisUser.calculateScore() + "");
-
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yy");
-            Date date = new Date(thisUser.getDateJoined());
             holder.dateJoinedText.setText(simpleDateFormat.format(date));
 
             thisView.setTag(holder);
@@ -728,60 +692,39 @@ public class SocialFragment extends Fragment {
                     switch (requestType) {
                         case SENT:
 
-                            holder.updateFriendStatus.setOnClickListener(new View.OnClickListener() {
+                            holder.updateFriendStatus.setOnClickListener((View view) -> {
 
-                                /**
-                                 * Cancels friend request send to searchedUser
-                                 * @param view view of the clicked button
-                                 */
-                                @Override
-                                public void onClick(View view) {
+                                searchedUser.removeFriendRequestFromUser(username);
+                                users.child(searchedUser.getUsername()).setValue(searchedUser);
+                                searchForUsers(searchView.getQuery().toString());
 
-                                    searchedUser.removeFriendRequestFromUser(username);
-                                    users.child(searchedUser.getUsername()).setValue(searchedUser);
-                                    searchForUsers(searchView.getQuery().toString());
-                                }
                             });
 
                             break;
 
                         case ACCEPTED:
 
-                            holder.updateFriendStatus.setOnClickListener(new View.OnClickListener() {
+                            holder.updateFriendStatus.setOnClickListener((View view) -> {
 
-                                /**
-                                 * Removes searchedUser from friendList
-                                 * @param view view of the clicked button
-                                 */
-                                @Override
-                                public void onClick(View view) {
-                                    user.removeFriend(searchedUser.getUsername());
-                                    searchedUser.removeFriend(username);
+                                user.removeFriend(searchedUser.getUsername());
+                                searchedUser.removeFriend(username);
 
-                                    users.child(searchedUser.getUsername()).setValue(searchedUser);
-                                    users.child(username).setValue(user);
-                                    searchForUsers(searchView.getQuery().toString());
-                                    friendList.setAdapter(new FriendListAdapter(getActivity(), user.getFriendList()));
-                                }
+                                users.child(searchedUser.getUsername()).setValue(searchedUser);
+                                users.child(username).setValue(user);
+                                searchForUsers(searchView.getQuery().toString());
+
                             });
 
                             break;
 
                         case NONE:
 
-                            holder.updateFriendStatus.setOnClickListener(new View.OnClickListener() {
+                            holder.updateFriendStatus.setOnClickListener((View view) -> {
 
-                                /**
-                                 * Sends friend request send to searchedUser
-                                 * @param view view of the clicked button
-                                 */
-                                @Override
-                                public void onClick(View view) {
+                                searchedUser.addFriendRequest(new FriendRequest(System.currentTimeMillis(), username));
+                                users.child(searchedUser.getUsername()).setValue(searchedUser);
+                                searchForUsers(searchView.getQuery().toString());
 
-                                    searchedUser.addFriendRequest(new FriendRequest(System.currentTimeMillis(), username));
-                                    users.child(searchedUser.getUsername()).setValue(searchedUser);
-                                    searchForUsers(searchView.getQuery().toString());
-                                }
                             });
 
                             break;

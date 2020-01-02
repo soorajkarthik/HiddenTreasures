@@ -10,6 +10,7 @@ import com.example.hiddentreasures.Model.User;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.*;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private PagerAdapter pagerAdapter;
     private String username;
     private User user;
+    private ArrayList<User> userList, friendList;
     private boolean isTabLayoutSetUpDone;
 
     @Override
@@ -34,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
+
+        userList = new ArrayList<>();
+        friendList = new ArrayList<>();
 
         username = Objects.requireNonNull(getIntent()
                 .getExtras()
@@ -55,6 +60,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.child(username).getValue(User.class);
+                userList.clear();
+                friendList.clear();
+                dataSnapshot.getChildren().forEach(child -> userList.add(child.getValue(User.class)));
+                user.getFriendList().forEach(friendName -> friendList.add(dataSnapshot.child(friendName).getValue(User.class)));
+                userList.sort(User::compareTo);
+                friendList.sort(User::compareTo);
                 /*
                  * Ensures that tablayout is set up after initial reference to user is received
                  * Ensures tablayout is only set up once
@@ -71,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
 
@@ -126,13 +136,11 @@ public class MainActivity extends AppCompatActivity {
             //Required method
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             //Required method
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
 
@@ -145,6 +153,15 @@ public class MainActivity extends AppCompatActivity {
         return user;
     }
 
+    public ArrayList<User> getUserList() {
+        return userList;
+    }
+
+    public ArrayList<User> getFriendList() {
+        return friendList;
+    }
+
+    //effectively disables back button so user cannot go back without logging out
     @Override
     public void onBackPressed() {
         return;

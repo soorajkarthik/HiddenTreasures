@@ -167,4 +167,15 @@ public class User implements Comparable {
 
         return scoreDiff == 0 ? timeDiff : scoreDiff;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        return getUsername().equals(user.getUsername());
+    }
+
 }
