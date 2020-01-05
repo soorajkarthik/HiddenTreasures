@@ -28,9 +28,9 @@ public class LoginActivity extends AppCompatActivity {
   private CheckBox checkStaySignedIn;
 
   /**
-   * If a user is currently signed on, go directly to MainActivity If no user is currently signed
-   * on, stay on current screen Get reference to Firebase Database, and the "Users" node Get
-   * reference to all components of the activity's view
+   * If a user is currently signed on, go directly to MainActivity If no user is currently signed on, stay on current
+   * screen Get reference to Firebase Database, and the "Users" node Get reference to all components of the activity's
+   * view
    *
    * @param savedInstanceState the last saved state of the application
    */
@@ -91,8 +91,8 @@ public class LoginActivity extends AppCompatActivity {
   }
 
   /**
-   * Check to see if there is a user in Firebase with the entered username and password combination
-   * If there is, start MainActivity
+   * Check to see if there is a user in Firebase with the entered username and password combination If there is, start
+   * MainActivity
    *
    * @param username entered username
    * @param password entered password
@@ -132,8 +132,7 @@ public class LoginActivity extends AppCompatActivity {
               }
             } else {
 
-              Toast.makeText(LoginActivity.this, "Username not registered", Toast.LENGTH_SHORT)
-                  .show();
+              Toast.makeText(LoginActivity.this, "Username not registered", Toast.LENGTH_SHORT).show();
             }
           }
 

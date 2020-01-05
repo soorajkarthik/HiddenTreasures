@@ -174,8 +174,8 @@ public class SocialFragment extends Fragment {
   }
 
   /**
-   * Filters usernames based on user's input Stores filtered usernames in a new ArrayList Updates
-   * display with search results
+   * Filters usernames based on user's input Stores filtered usernames in a new ArrayList Updates display with search
+   * results
    *
    * @param searchText the user's input
    */
