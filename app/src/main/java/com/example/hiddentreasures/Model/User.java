@@ -10,6 +10,7 @@ public class User implements Comparable {
     private String password;
     private long dateJoined;
     private long lastSeen;
+    private String instanceToken;
 
     private ArrayList<String> friendList;
     private ArrayList<FriendRequest> friendRequests;
@@ -17,6 +18,7 @@ public class User implements Comparable {
     private HashMap<String, Integer> foundTreasures;
 
     public User() {
+
         friendList = new ArrayList<>();
         friendRequests = new ArrayList<>();
         treasuresFoundTodayIDs = new ArrayList<>();
@@ -73,6 +75,14 @@ public class User implements Comparable {
 
     public long getDateJoined() {
         return dateJoined;
+    }
+
+    public String getInstanceToken() {
+        return instanceToken;
+    }
+
+    public void setInstanceToken(String token) {
+        instanceToken = token;
     }
 
     public void addFriendRequest(FriendRequest friendRequest) {

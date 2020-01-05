@@ -9,6 +9,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.hiddentreasures.Model.User;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.*;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private String username;
     private User user;
     private ArrayList<User> userList, friendList;
-    private boolean isTabLayoutSetUpDone;
+    private boolean hasUpdatedNotificationToken, isTabLayoutSetUpDone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 .getExtras()
                 .getString("username"));
 
+        hasUpdatedNotificationToken = false;
         isTabLayoutSetUpDone = false;
         updateUser();
     }
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         users.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 user = dataSnapshot.child(username).getValue(User.class);
                 userList.clear();
                 friendList.clear();
@@ -66,12 +69,15 @@ public class MainActivity extends AppCompatActivity {
                 user.getFriendList().forEach(friendName -> friendList.add(dataSnapshot.child(friendName).getValue(User.class)));
                 userList.sort(User::compareTo);
                 friendList.sort(User::compareTo);
+
+                if (!hasUpdatedNotificationToken)
+                    updateNotificationToken();
+
                 /*
                  * Ensures that tablayout is set up after initial reference to user is received
                  * Ensures tablayout is only set up once
                  * Sets the tab that is seen when the app is opened to the step counter tab
                  */
-
                 if (!isTabLayoutSetUpDone) {
                     setUpLayout();
                     viewPager.setCurrentItem(1);
@@ -84,7 +90,19 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+    }
 
+    private void updateNotificationToken() {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        String token = task.getResult().getToken();
+                        user.setInstanceToken(token);
+                        users.child(username).setValue(user);
+                        hasUpdatedNotificationToken = true;
+
+                    }
+                });
     }
 
     private void updateLastSeen() {

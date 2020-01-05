@@ -104,7 +104,7 @@ public class SocialFragment extends Fragment {
 
                 if (newText.length() > 0) {
 
-                    searchForUsers(newText);
+                    updateSearchResults(newText);
                     setFriendListInvisible();
 
                 } else {
@@ -165,53 +165,24 @@ public class SocialFragment extends Fragment {
     }
 
     /**
-     * Gets all usernames stored in Firebase, stores them in an ArrayList
-     * Passes ArrayList to updateSearchResults method
-     *
-     * @param searchText the user's input
-     */
-    private void searchForUsers(final String searchText) {
-
-        ArrayList<String> usernameList = new ArrayList<>();
-        users.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                dataSnapshot.getChildren().forEach(child -> usernameList.add(child.child("username").getValue(String.class)));
-                updateSearchResults(searchText, usernameList);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-
-    }
-
-    /**
      * Filters usernames based on user's input
      * Stores filtered usernames in a new ArrayList
      * Updates display with search results
      *
-     * @param searchText   the user's input
-     * @param usernameList list of all usernames in Firebase
+     * @param searchText the user's input
      */
-    private void updateSearchResults(String searchText, ArrayList<String> usernameList) {
+    private void updateSearchResults(String searchText) {
 
-        ArrayList<String> filteredUsernameList = new ArrayList<>();
+        ArrayList<User> filteredUserList = new ArrayList<>();
 
-        usernameList.remove(username);
 
-        for (String tempUsername : usernameList) {
-
-            if (tempUsername.toLowerCase().contains(searchText.toLowerCase())) {
-                filteredUsernameList.add(tempUsername);
-
+        for (User u : userList)
+            if (u.getUsername().toLowerCase().contains(searchText.toLowerCase())) {
+                filteredUserList.add(u);
             }
-        }
 
-        searchListView.setAdapter(new UserSearchAdapter(getActivity(), filteredUsernameList));
+        filteredUserList.remove(user);
+        searchListView.setAdapter(new UserSearchAdapter(getActivity(), filteredUserList));
     }
 
     /**
@@ -595,20 +566,20 @@ public class SocialFragment extends Fragment {
         int count;
         Context context;
         private LayoutInflater layoutInflater;
-        private ArrayList<String> filteredUsernameList;
+        private ArrayList<User> filterUserList;
 
         /**
          * Constructor
          *
          * @param context              current application context
-         * @param filteredUsernameList filtered search results
+         * @param filterUserList filtered search results
          */
-        public UserSearchAdapter(Context context, ArrayList<String> filteredUsernameList) {
+        public UserSearchAdapter(Context context, ArrayList<User> filterUserList) {
 
             layoutInflater = LayoutInflater.from(context);
-            this.filteredUsernameList = new ArrayList<>();
-            this.filteredUsernameList.addAll(filteredUsernameList);
-            this.count = filteredUsernameList.size();
+            this.filterUserList = new ArrayList<>();
+            this.filterUserList.addAll(filterUserList);
+            this.count = filterUserList.size();
             this.context = context;
         }
 
@@ -626,7 +597,7 @@ public class SocialFragment extends Fragment {
          */
         @Override
         public Object getItem(int i) {
-            return filteredUsernameList.get(i);
+            return filterUserList.get(i);
         }
 
         /**
@@ -654,6 +625,27 @@ public class SocialFragment extends Fragment {
             holder.requestStatusText = thisView.findViewById(R.id.requestStatusText);
             holder.updateFriendStatus = thisView.findViewById(R.id.updateFriendStatus);
 
+            final User searchedUser = filterUserList.get(i);
+            final RequestType requestType;
+
+            holder.usernameText.setText(searchedUser.getUsername());
+
+            if (searchedUser.hasFriendRequestFromUser(username)) {
+
+                holder.requestStatusText.setText("Requested");
+                holder.updateFriendStatus.setText("Cancel");
+                requestType = RequestType.SENT;
+            } else if (user.isFriendOfUser(searchedUser.getUsername())) {
+
+                holder.requestStatusText.setText("Accepted");
+                holder.updateFriendStatus.setText("Remove");
+                requestType = RequestType.ACCEPTED;
+            } else {
+
+                holder.requestStatusText.setText("None");
+                holder.updateFriendStatus.setText("Request");
+                requestType = RequestType.NONE;
+            }
 
             users.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -662,32 +654,11 @@ public class SocialFragment extends Fragment {
                  * If user is a friend, allow them to remove the searchedUser from their friend list
                  * If user has already SENT a friend request, allow them to cancel the request
                  * If neither, allow user to send the searchedUser a friend request
+                 *
                  * @param dataSnapshot snapshot of the Users node in its current state
                  */
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                    final User searchedUser = dataSnapshot.child(filteredUsernameList.get(i)).getValue(User.class);
-                    final RequestType requestType;
-
-                    holder.usernameText.setText(searchedUser.getUsername());
-
-                    if (searchedUser.hasFriendRequestFromUser(username)) {
-
-                        holder.requestStatusText.setText("Requested");
-                        holder.updateFriendStatus.setText("Cancel");
-                        requestType = RequestType.SENT;
-                    } else if (user.isFriendOfUser(searchedUser.getUsername())) {
-
-                        holder.requestStatusText.setText("Accepted");
-                        holder.updateFriendStatus.setText("Remove");
-                        requestType = RequestType.ACCEPTED;
-                    } else {
-
-                        holder.requestStatusText.setText("None");
-                        holder.updateFriendStatus.setText("Request");
-                        requestType = RequestType.NONE;
-                    }
 
                     switch (requestType) {
                         case SENT:
@@ -696,7 +667,7 @@ public class SocialFragment extends Fragment {
 
                                 searchedUser.removeFriendRequestFromUser(username);
                                 users.child(searchedUser.getUsername()).setValue(searchedUser);
-                                searchForUsers(searchView.getQuery().toString());
+                                updateSearchResults(searchView.getQuery().toString());
 
                             });
 
@@ -711,7 +682,7 @@ public class SocialFragment extends Fragment {
 
                                 users.child(searchedUser.getUsername()).setValue(searchedUser);
                                 users.child(username).setValue(user);
-                                searchForUsers(searchView.getQuery().toString());
+                                updateSearchResults(searchView.getQuery().toString());
 
                             });
 
@@ -723,7 +694,7 @@ public class SocialFragment extends Fragment {
 
                                 searchedUser.addFriendRequest(new FriendRequest(System.currentTimeMillis(), username));
                                 users.child(searchedUser.getUsername()).setValue(searchedUser);
-                                searchForUsers(searchView.getQuery().toString());
+                                updateSearchResults(searchView.getQuery().toString());
 
                             });
 
