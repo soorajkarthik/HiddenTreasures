@@ -141,27 +141,33 @@ public class MapFragment extends Fragment {
                 private final IconGenerator iconGenerator = new IconGenerator(getContext());
 
                 @Override
-                protected void onBeforeClusterItemRendered(
-                    Treasure item, MarkerOptions markerOptions) {
+                protected void onBeforeClusterItemRendered(Treasure item, MarkerOptions markerOptions) {
                   super.onBeforeClusterItemRendered(item, markerOptions);
 
                   if (user.getTreasuresFoundTodayIDs().contains(item.getId())) {
-                    iconGenerator.setBackground(
-                        getContext().getDrawable(R.drawable.ic_treasure_found));
-                    markerOptions.icon(
-                        BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()));
-                    markerOptions.flat(true);
+                    iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_found));
                   } else {
-                    iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure));
-                    markerOptions.icon(
-                        BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()));
-                    markerOptions.flat(true);
+                    switch (item.getRarity()) {
+                      case Treasure.COMMON:
+                        iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_common));
+                        break;
+                      case Treasure.UNCOMMON:
+                        iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_uncommon));
+                        break;
+                      case Treasure.RARE:
+                        iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_rare));
+                        break;
+                      case Treasure.ULTRA_RARE:
+                        iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_ultrarare));
+                        break;
+                      case Treasure.LEGENDARY:
+                        iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_legendary));
+                        break;
+                    }
                   }
-                }
 
-                @Override
-                public void onRemove() {
-                  super.onRemove();
+                  markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()));
+                  markerOptions.flat(true);
                 }
               });
 

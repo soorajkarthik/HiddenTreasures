@@ -313,10 +313,6 @@ public class SocialFragment extends Fragment {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
 
-      if (view != null) {
-        return view;
-      }
-
       final View thisView = layoutInflater.inflate(R.layout.friends_list_element, null);
       final FriendListHolder holder = new FriendListHolder();
       final User friend = friends.get(i);
@@ -410,10 +406,6 @@ public class SocialFragment extends Fragment {
      */
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-
-      if (view != null) {
-        return view;
-      }
 
       final View thisView = layoutInflater.inflate(R.layout.requests_list_element, null);
       final FriendRequestHolder holder = new FriendRequestHolder();
@@ -542,10 +534,6 @@ public class SocialFragment extends Fragment {
      */
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-
-      if (view != null) {
-        return view;
-      }
 
       final View thisView = layoutInflater.inflate(R.layout.leaderboard_list_element, null);
       final LeaderboardListHolder holder = new LeaderboardListHolder();

@@ -24,14 +24,14 @@ public class NotificationService extends FirebaseMessagingService {
 
     Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-    NotificationCompat.Builder notificationBuilder =
-        new NotificationCompat.Builder(getApplicationContext(), NotificationCompat.CATEGORY_SOCIAL)
-            .setSmallIcon(R.drawable.ic_smiley_face_white_24dp)
-            .setContentTitle("FCM Message")
-            .setContentText(messageBody)
-            .setAutoCancel(true)
-            .setSound(defaultSoundUri)
-            .setContentIntent(pendingIntent);
+    NotificationCompat.Builder notificationBuilder = new NotificationCompat
+        .Builder(getApplicationContext(), NotificationCompat.CATEGORY_SOCIAL)
+        .setSmallIcon(R.drawable.ic_smiley_face_white_24dp)
+        .setContentTitle("FCM Message")
+        .setContentText(messageBody)
+        .setAutoCancel(true)
+        .setSound(defaultSoundUri)
+        .setContentIntent(pendingIntent);
 
     NotificationManager notificationManager =
         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
