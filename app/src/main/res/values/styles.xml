@@ -1,29 +1,29 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:fontFamily">@font/droid_sans_mono</item>
-        <item name="searchViewStyle">@style/AppTheme.SearchView</item>
-        <item name="alertDialogTheme">@style/AppTheme.AlertDialog</item>
-    </style>
+  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorAccent">@color/colorAccent</item>
+    <item name="android:fontFamily">@font/droid_sans_mono</item>
+    <item name="searchViewStyle">@style/AppTheme.SearchView</item>
+    <item name="alertDialogTheme">@style/AppTheme.AlertDialog</item>
+  </style>
 
-    <style name="AppTheme.SearchView" parent="Widget.AppCompat.Light.SearchView">
-        <item name="searchIcon">@drawable/ic_search_white_24dp</item>
-        <item name="searchHintIcon">@drawable/ic_search_white_24dp</item>
-        <item name="queryBackground">@color/white</item>
-        <item name="android:maxWidth">10000dp</item>
-    </style>
+  <style name="AppTheme.SearchView" parent="Widget.AppCompat.Light.SearchView">
+    <item name="searchIcon">@drawable/ic_search_white_24dp</item>
+    <item name="searchHintIcon">@drawable/ic_search_white_24dp</item>
+    <item name="queryBackground">@color/white</item>
+    <item name="android:maxWidth">10000dp</item>
+  </style>
 
-    <style name="AppTheme.AlertDialog" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:textAppearanceSmall">@style/AppTheme.AlertDialog.TextAppearance</item>
-        <item name="android:textAppearanceMedium">@style/AppTheme.AlertDialog.TextAppearance</item>
-        <item name="android:textAppearanceLarge">@style/AppTheme.AlertDialog.TextAppearance</item>
-        <item name="android:fontFamily">@font/droid_sans_mono</item>
-    </style>
+  <style name="AppTheme.AlertDialog" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
+    <item name="android:textAppearanceSmall">@style/AppTheme.AlertDialog.TextAppearance</item>
+    <item name="android:textAppearanceMedium">@style/AppTheme.AlertDialog.TextAppearance</item>
+    <item name="android:textAppearanceLarge">@style/AppTheme.AlertDialog.TextAppearance</item>
+    <item name="android:fontFamily">@font/droid_sans_mono</item>
+  </style>
 
-    <style name="AppTheme.AlertDialog.TextAppearance" parent="TextAppearance.AppCompat">
-        <item name="android:fontFamily">@font/droid_sans_mono</item>
-    </style>
+  <style name="AppTheme.AlertDialog.TextAppearance" parent="TextAppearance.AppCompat">
+    <item name="android:fontFamily">@font/droid_sans_mono</item>
+  </style>
 </resources>
