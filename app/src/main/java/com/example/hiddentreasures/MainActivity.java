@@ -1,5 +1,7 @@
 package com.example.hiddentreasures;
 
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,7 +57,42 @@ public class MainActivity extends AppCompatActivity {
     updateLastSeen();
   }
 
-  public void updateUser() {
+  private void showInstructions() {
+    SharedPreferences pref =
+        getApplicationContext().getSharedPreferences("MyPref", 0);
+
+    if (pref.getString("hasShownInstructions", null) == null) {
+
+      new AlertDialog.Builder(this)
+          .setTitle("Welcome!")
+          .setMessage(
+              "- Swipe left and right to navigate"
+                  + "\n- Pinch to zoom"
+                  + "\n- Tap on a treasure when you're near"
+                  + "\n  it to collect it"
+                  + "\n- Collect as many treasures as you can!"
+                  + "\n- Search for your friends to add them"
+                  + "\n  and compete with them!"
+                  + "\n- Treasures don't understand the concept"
+                  + "\n  of private property. Please stay safe"
+                  + "\n  and don't trespass."
+                  + "\n- What are you waiting for?"
+                  + "\n  GET EXPLORING AND HAVE FUN!"
+                  + "\n\n\n  (Pro tip: the closer the star is to red"
+                  + "\n   the more points its worth!)")
+          .setNegativeButton("Ok",
+              (dialog, which) -> {
+                dialog.dismiss();
+                pref.edit()
+                    .putString("hasShownInstructions", "Yes")
+                    .apply();
+              })
+          .create()
+          .show();
+    }
+  }
+
+  private void updateUser() {
 
     users.addValueEventListener(
         new ValueEventListener() {
@@ -172,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
     // Connects ViewPager to TabLayout
     viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     isTabLayoutSetUpDone = true;
+    showInstructions();
   }
 
   public User getUser() {

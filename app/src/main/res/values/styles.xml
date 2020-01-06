@@ -18,6 +18,7 @@
 
   <style name="AppTheme.AlertDialog" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
     <item name="android:textAppearanceSmall">@style/AppTheme.AlertDialog.TextAppearance</item>
+    <item name="android:dialogMessage">12sp</item>
     <item name="android:textAppearanceMedium">@style/AppTheme.AlertDialog.TextAppearance</item>
     <item name="android:textAppearanceLarge">@style/AppTheme.AlertDialog.TextAppearance</item>
     <item name="android:fontFamily">@font/droid_sans_mono</item>

@@ -22,18 +22,40 @@
     android:text="Score: "
     android:textSize="14sp"
     app:layout_constraintStart_toStartOf="@id/usernameText"
-    app:layout_constraintTop_toBottomOf="@id/usernameText"/>
+    app:layout_constraintTop_toBottomOf="@id/rank"/>
 
   <TextView
     android:id="@+id/scoreText"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="0dp"
-    android:layout_marginStart="16dp"
+    android:layout_marginStart="0dp"
     android:text="Score Text"
     android:textSize="14sp"
-    app:layout_constraintStart_toEndOf="@id/score"
+    app:layout_constraintStart_toStartOf="@id/lastSeenText"
     app:layout_constraintTop_toTopOf="@id/score"/>
+
+  <TextView
+    android:id="@+id/rank"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginStart="0dp"
+    android:text="Rank: "
+    android:textSize="14sp"
+    app:layout_constraintStart_toStartOf="@id/usernameText"
+    app:layout_constraintTop_toBottomOf="@id/usernameText"/>
+
+  <TextView
+    android:id="@+id/rankText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="0dp"
+    android:layout_marginStart="0dp"
+    android:text="Rank Text"
+    android:textSize="14sp"
+    app:layout_constraintStart_toStartOf="@id/lastSeenText"
+    app:layout_constraintTop_toTopOf="@id/rank"/>
 
   <TextView
     android:id="@+id/lastSeen"

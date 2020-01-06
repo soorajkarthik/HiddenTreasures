@@ -169,10 +169,10 @@ public class User implements Comparable, Cloneable {
     int score = 0;
 
     score += foundTreasures.get(Treasure.COMMON) * 100;
-    score += foundTreasures.get(Treasure.UNCOMMON) * 200;
-    score += foundTreasures.get(Treasure.RARE) * 300;
-    score += foundTreasures.get(Treasure.ULTRA_RARE) * 400;
-    score += foundTreasures.get(Treasure.LEGENDARY) * 500;
+    score += foundTreasures.get(Treasure.UNCOMMON) * 250;
+    score += foundTreasures.get(Treasure.RARE) * 500;
+    score += foundTreasures.get(Treasure.ULTRA_RARE) * 1000;
+    score += foundTreasures.get(Treasure.LEGENDARY) * 5000;
 
     return score;
   }

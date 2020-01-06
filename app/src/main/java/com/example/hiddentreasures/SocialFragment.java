@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 public class SocialFragment extends Fragment {
 
@@ -181,13 +182,9 @@ public class SocialFragment extends Fragment {
    */
   private void updateSearchResults(String searchText) {
 
-    ArrayList<User> filteredUserList = new ArrayList<>();
-
-    for (User u : userList) {
-      if (u.getUsername().toLowerCase().contains(searchText.toLowerCase())) {
-        filteredUserList.add(u);
-      }
-    }
+    ArrayList<User> filteredUserList = userList.stream()
+        .filter(u -> u.getUsername().toLowerCase().contains(searchText.toLowerCase()))
+        .collect(Collectors.toCollection(ArrayList::new));
 
     filteredUserList.remove(user);
     searchListView.setAdapter(new UserSearchAdapter(getActivity(), filteredUserList));
@@ -319,9 +316,12 @@ public class SocialFragment extends Fragment {
       String lastSeenText = getTimeDifferenceText(friend.getLastSeen());
 
       holder.usernameText = thisView.findViewById(R.id.usernameText);
+      holder.rankText = thisView.findViewById(R.id.rankText);
       holder.scoreText = thisView.findViewById(R.id.scoreText);
       holder.lastSeenText = thisView.findViewById(R.id.lastSeenText);
+
       holder.usernameText.setText(friend.getUsername());
+      holder.rankText.setText((i + 1) + "");
       holder.scoreText.setText(friend.calculateScore() + "");
       holder.lastSeenText.setText(lastSeenText);
 
@@ -337,9 +337,8 @@ public class SocialFragment extends Fragment {
     class FriendListHolder {
 
       TextView usernameText;
-
+      TextView rankText;
       TextView scoreText;
-
       TextView lastSeenText;
     }
   }
@@ -463,11 +462,8 @@ public class SocialFragment extends Fragment {
     class FriendRequestHolder {
 
       TextView usernameText;
-
       TextView timeReceivedText;
-
       Button btnAccept;
-
       Button btnDelete;
     }
   }
@@ -563,11 +559,8 @@ public class SocialFragment extends Fragment {
     class LeaderboardListHolder {
 
       TextView usernameText;
-
       TextView scoreText;
-
       TextView rankText;
-
       TextView dateJoinedText;
     }
   }
@@ -731,9 +724,7 @@ public class SocialFragment extends Fragment {
     class FriendSearchHolder {
 
       TextView usernameText;
-
       Button updateFriendStatus;
-
       TextView requestStatusText;
     }
   }

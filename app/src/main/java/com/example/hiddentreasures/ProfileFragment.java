@@ -49,15 +49,14 @@ public class ProfileFragment extends Fragment {
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yy");
     Date date = new Date(user.getDateJoined());
+
     ArrayList<User> userList = ((MainActivity) getActivity()).getUserList();
     ArrayList<User> friendList = ((MainActivity) getActivity()).getFriendList();
-    friendList.add(user);
-    friendList.sort(User::compareTo);
 
     ((TextView) view.findViewById(R.id.usernameText)).setText(username);
     ((TextView) view.findViewById(R.id.dateJoinedText)).setText(simpleDateFormat.format(date));
-    ((TextView) view.findViewById(R.id.globalRankText)).setText((userList.indexOf(user) + 1) + "");
-    ((TextView) view.findViewById(R.id.socialRankText)).setText((friendList.indexOf(user) + 1) + "");
+    ((TextView) view.findViewById(R.id.globalRankText)).setText((userList.indexOf(user.placeHolderUser()) + 1) + "");
+    ((TextView) view.findViewById(R.id.socialRankText)).setText((friendList.indexOf(user.placeHolderUser()) + 1) + "");
     ((TextView) view.findViewById(R.id.scoreText)).setText(user.calculateScore() + "");
     ((TextView) view.findViewById(R.id.commonText)).setText(user.getFoundTreasures().get(Treasure.COMMON) + "");
     ((TextView) view.findViewById(R.id.uncommonText)).setText(user.getFoundTreasures().get(Treasure.UNCOMMON) + "");
@@ -87,8 +86,7 @@ public class ProfileFragment extends Fragment {
             editor.remove("username");
             editor.commit();
 
-            Intent myIntent =
-                new Intent(getActivity().getApplicationContext(), LoginActivity.class);
+            Intent myIntent = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
             startActivity(myIntent);
           })
           .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())

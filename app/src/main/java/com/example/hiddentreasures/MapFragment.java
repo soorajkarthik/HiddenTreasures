@@ -1,7 +1,6 @@
 package com.example.hiddentreasures;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -9,6 +8,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -111,8 +113,10 @@ public class MapFragment extends Fragment {
 
     setHasOptionsMenu(true);
     view = inflater.inflate(R.layout.fragment_map, container, false);
+
     initialCameraLocationSet = false;
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
     return view;
   }
 
@@ -123,7 +127,33 @@ public class MapFragment extends Fragment {
     mapView.onCreate(savedInstanceState);
   }
 
-  @SuppressLint("NewApi")
+  @Override
+  public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+    inflater.inflate(R.menu.menu_map, menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    if (item.getItemId() == R.id.optHelp) {
+      new AlertDialog.Builder(getContext())
+          .setTitle("Help")
+          .setMessage(
+              "\n- Pinch to zoom"
+                  + "\n- Move within a treasure's circle to collect it"
+                  + "\n- Color Cheat-Sheet:"
+                  + "\n\t\t- Blue - Common - 100 Points"
+                  + "\n\t\t- Green - Uncommon - 250 Points"
+                  + "\n\t\t- Yellow - Rare - 500 Points"
+                  + "\n\t\t- Orange - Ultra-Rare - 1000 Points"
+                  + "\n\t\t- Red - Legendary - 5000 Points")
+          .setNegativeButton("Ok", (dialog, which) -> dialog.dismiss())
+          .create()
+          .show();
+    }
+
+    return true;
+  }
+
   private void loadMap() {
 
     mapView.getMapAsync(
@@ -132,6 +162,7 @@ public class MapFragment extends Fragment {
 
           mGoogleMap = googleMap;
           mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+          mGoogleMap.setMinZoomPreference(11.5f);
 
           clusterManager = new ClusterManager<>(getContext(), mGoogleMap);
           clusterManager.setAlgorithm(new NonHierarchicalDistanceBasedAlgorithm<>());
@@ -167,11 +198,9 @@ public class MapFragment extends Fragment {
                   }
 
                   markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()));
-                  markerOptions.flat(true);
+                  markerOptions.flat(false);
                 }
               });
-
-          clusterManager.setAnimation(false);
 
           clusterManager.setOnClusterItemClickListener(
               treasure -> {
@@ -191,15 +220,11 @@ public class MapFragment extends Fragment {
                   users.child(username).setValue(user);
 
                   mGoogleMap.clear();
-                  mGoogleMap.moveCamera(CameraUpdateFactory.zoomTo(11.5f));
                   clusterManager.cluster();
 
                   new AlertDialog.Builder(getContext())
-                      .setTitle(
-                          "Congratulations!\nYou found a " + treasure.getRarity()
-                              + " treasure!")
-                      .setNegativeButton(
-                          "OK",
+                      .setTitle("Congratulations!\nYou found a " + treasure.getRarity() + " treasure!")
+                      .setNegativeButton("Ok",
                           ((dialog, which) ->
                               Toast.makeText(getContext(), "Keep Exploring!",
                                   Toast.LENGTH_LONG)
@@ -208,13 +233,14 @@ public class MapFragment extends Fragment {
                       .show();
                 } else if (!user.getTreasuresFoundTodayIDs().contains(treasure.getId())) {
 
-                  currentDrawnCircle =
-                      mGoogleMap.addCircle(
-                          new CircleOptions()
-                              .radius(250)
-                              .center(treasure.getPosition())
-                              .clickable(false)
-                              .fillColor(Color.argb(0.5f, 0, 89, 117)));
+                  currentDrawnCircle = mGoogleMap.addCircle(
+                      new CircleOptions()
+                          .radius(250)
+                          .center(treasure.getPosition())
+                          .clickable(false)
+                          .fillColor(Color.argb(0.5f, 0, 89, 117)));
+
+                  mGoogleMap.moveCamera(CameraUpdateFactory.zoomTo(15f));
                 }
 
                 return false;
@@ -224,7 +250,6 @@ public class MapFragment extends Fragment {
 
           mGoogleMap.setOnCameraIdleListener(clusterManager);
           mGoogleMap.setOnMarkerClickListener(clusterManager);
-          mGoogleMap.setMinZoomPreference(11.5f);
 
           mGoogleMap.setOnMapClickListener(
               latLng -> {
@@ -232,6 +257,12 @@ public class MapFragment extends Fragment {
                   currentDrawnCircle.remove();
                 }
               });
+
+          mGoogleMap.setOnCameraMoveListener(() -> {
+            if (mGoogleMap.getCameraPosition().zoom < 14f && currentDrawnCircle != null) {
+              currentDrawnCircle.remove();
+            }
+          });
 
           locationRequest = new LocationRequest();
           locationRequest.setInterval(5000); // five second interval

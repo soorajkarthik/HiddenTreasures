@@ -3,7 +3,6 @@ package com.example.hiddentreasures;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -62,32 +61,13 @@ public class LoginActivity extends AppCompatActivity {
     checkStaySignedIn = findViewById(R.id.checkStaySignedIn);
 
     btnLogIn.setOnClickListener(
-        new View.OnClickListener() {
-          /**
-           * Sends required information to login user from text boxes to login method
-           *
-           * @param view view of the clicked button
-           */
-          @Override
-          public void onClick(View view) {
-            logIn(editUsername.getText().toString(), editPassword.getText().toString());
-          }
-        });
+        view -> logIn(editUsername.getText().toString(), editPassword.getText().toString()));
 
-    btnToSignUp.setOnClickListener(
-        new View.OnClickListener() {
-          /**
-           * Send user to SignUp screen
-           *
-           * @param view view of the clicked button
-           */
-          @Override
-          public void onClick(View view) {
+    btnToSignUp.setOnClickListener(view -> {
 
-            Intent myIntent = new Intent(getApplicationContext(), SignUpActivity.class);
-            startActivity(myIntent);
-          }
-        });
+      Intent myIntent = new Intent(getApplicationContext(), SignUpActivity.class);
+      startActivity(myIntent);
+    });
   }
 
   /**
