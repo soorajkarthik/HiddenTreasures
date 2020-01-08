@@ -27,9 +27,9 @@ public class LoginActivity extends AppCompatActivity {
   private CheckBox checkStaySignedIn;
 
   /**
-   * If a user is currently signed on, go directly to MainActivity If no user is currently signed on, stay on current
-   * screen Get reference to Firebase Database, and the "Users" node Get reference to all components of the activity's
-   * view
+   * If a user is currently signed on, go directly to MainActivity. If no user is currently signed
+   * on, stay on current screen. Get reference to Firebase Database, and the "Users" node. Get
+   * reference to all components of the activity's view
    *
    * @param savedInstanceState the last saved state of the application
    */
@@ -60,19 +60,21 @@ public class LoginActivity extends AppCompatActivity {
     btnToSignUp = findViewById(R.id.btnToSignUp);
     checkStaySignedIn = findViewById(R.id.checkStaySignedIn);
 
+    //When logIn button is clicked, try logging in user with username and password they entered
     btnLogIn.setOnClickListener(
         view -> logIn(editUsername.getText().toString(), editPassword.getText().toString()));
 
-    btnToSignUp.setOnClickListener(view -> {
-
-      Intent myIntent = new Intent(getApplicationContext(), SignUpActivity.class);
-      startActivity(myIntent);
-    });
+    //When toSignUp button is clicked, start SignUpActivity
+    btnToSignUp.setOnClickListener(
+        view -> {
+          Intent myIntent = new Intent(getApplicationContext(), SignUpActivity.class);
+          startActivity(myIntent);
+        });
   }
 
   /**
-   * Check to see if there is a user in Firebase with the entered username and password combination If there is, start
-   * MainActivity
+   * Check to see if there is a user in Firebase with the entered username and password combination.
+   * If there is, send user to MainActivity. If not, show error dialogs.
    *
    * @param username entered username
    * @param password entered password
@@ -90,11 +92,15 @@ public class LoginActivity extends AppCompatActivity {
 
               if (login.getPassword().equals(password)) {
 
-                Toast.makeText(LoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                    getApplicationContext(),
+                    "Login Successful!",
+                    Toast.LENGTH_SHORT)
+                    .show();
 
                 /*
-                 * If stay signed in box is checked, store username on
-                 * device so login is no longer necessary until user logs out
+                 * If stay signed in box is checked, store username on device so login is no longer
+                 * necessary until user logs out
                  */
                 if (checkStaySignedIn.isChecked()) {
 
@@ -108,11 +114,19 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(myIntent);
               } else {
 
-                Toast.makeText(LoginActivity.this, "Incorrect Password", Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                    getApplicationContext(),
+                    "Incorrect Password",
+                    Toast.LENGTH_SHORT)
+                    .show();
               }
             } else {
 
-              Toast.makeText(LoginActivity.this, "Username not registered", Toast.LENGTH_SHORT).show();
+              Toast.makeText(
+                  getApplicationContext(),
+                  "Username not registered",
+                  Toast.LENGTH_SHORT)
+                  .show();
             }
           }
 

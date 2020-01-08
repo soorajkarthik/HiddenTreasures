@@ -53,16 +53,35 @@ public class ProfileFragment extends Fragment {
     ArrayList<User> userList = ((MainActivity) getActivity()).getUserList();
     ArrayList<User> friendList = ((MainActivity) getActivity()).getFriendList();
 
-    ((TextView) view.findViewById(R.id.usernameText)).setText(username);
-    ((TextView) view.findViewById(R.id.dateJoinedText)).setText(simpleDateFormat.format(date));
-    ((TextView) view.findViewById(R.id.globalRankText)).setText((userList.indexOf(user.placeHolderUser()) + 1) + "");
-    ((TextView) view.findViewById(R.id.socialRankText)).setText((friendList.indexOf(user.placeHolderUser()) + 1) + "");
-    ((TextView) view.findViewById(R.id.scoreText)).setText(user.calculateScore() + "");
-    ((TextView) view.findViewById(R.id.commonText)).setText(user.getFoundTreasures().get(Treasure.COMMON) + "");
-    ((TextView) view.findViewById(R.id.uncommonText)).setText(user.getFoundTreasures().get(Treasure.UNCOMMON) + "");
-    ((TextView) view.findViewById(R.id.rareText)).setText(user.getFoundTreasures().get(Treasure.RARE) + "");
-    ((TextView) view.findViewById(R.id.ultraRareText)).setText(user.getFoundTreasures().get(Treasure.ULTRA_RARE) + "");
-    ((TextView) view.findViewById(R.id.legendaryText)).setText(user.getFoundTreasures().get(Treasure.LEGENDARY) + "");
+    ((TextView) view.findViewById(R.id.usernameText))
+        .setText(username);
+
+    ((TextView) view.findViewById(R.id.dateJoinedText))
+        .setText(simpleDateFormat.format(date));
+
+    ((TextView) view.findViewById(R.id.globalRankText))
+        .setText((userList.indexOf(user.placeHolderUser()) + 1) + "");
+
+    ((TextView) view.findViewById(R.id.socialRankText))
+        .setText((friendList.indexOf(user.placeHolderUser()) + 1) + "");
+
+    ((TextView) view.findViewById(R.id.scoreText))
+        .setText(user.calculateScore() + "");
+
+    ((TextView) view.findViewById(R.id.commonText))
+        .setText(user.getFoundTreasures().get(Treasure.COMMON) + "");
+
+    ((TextView) view.findViewById(R.id.uncommonText))
+        .setText(user.getFoundTreasures().get(Treasure.UNCOMMON) + "");
+
+    ((TextView) view.findViewById(R.id.rareText))
+        .setText(user.getFoundTreasures().get(Treasure.RARE) + "");
+
+    ((TextView) view.findViewById(R.id.ultraRareText))
+        .setText(user.getFoundTreasures().get(Treasure.ULTRA_RARE) + "");
+
+    ((TextView) view.findViewById(R.id.legendaryText))
+        .setText(user.getFoundTreasures().get(Treasure.LEGENDARY) + "");
   }
 
   @Override
@@ -84,9 +103,10 @@ public class ProfileFragment extends Fragment {
 
             SharedPreferences.Editor editor = pref.edit();
             editor.remove("username");
-            editor.commit();
+            editor.apply();
 
-            Intent myIntent = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
+            Intent myIntent = new Intent(getActivity().getApplicationContext(),
+                LoginActivity.class);
             startActivity(myIntent);
           })
           .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())

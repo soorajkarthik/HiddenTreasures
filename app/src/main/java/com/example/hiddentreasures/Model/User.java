@@ -130,8 +130,8 @@ public class User implements Comparable {
   }
 
   /**
-   * @return A user to be used in the leaderboards. Has the same score and lastSeen as
-   * the current user. The user's username has been replaced with "You"
+   * @return A user to be used in the leaderboards. Has the same score and lastSeen as the current
+   * user. The user's username has been replaced with "You"
    */
   public User placeHolderUser() {
     User temp = new User(null, "You", null, dateJoined);
@@ -213,8 +213,8 @@ public class User implements Comparable {
   }
 
   /**
-   * Adds treasure's id to list of ids of treasures that were found today.
-   * Adds treasure to HashMap that keeps track of all treasures that have been found
+   * Adds treasure's id to list of ids of treasures that were found today. Adds treasure to HashMap
+   * that keeps track of all treasures that have been found
    *
    * @param treasure Treasure that is to be added
    */
@@ -245,26 +245,21 @@ public class User implements Comparable {
   public String scoreSummary() {
     return "Total Score:  "
         + calculateScore()
-        + "\nCommon:       "
-        + foundTreasures.get(Treasure.COMMON)
-        + "\nUncommon:     "
-        + foundTreasures.get(Treasure.UNCOMMON)
-        + "\nRare:         "
-        + foundTreasures.get(Treasure.RARE)
-        + "\nUltra-Rare:   "
-        + foundTreasures.get(Treasure.ULTRA_RARE)
-        + "\nLegendary:    "
-        + foundTreasures.get(Treasure.LEGENDARY);
+        + "\nCommon:       " + foundTreasures.get(Treasure.COMMON)
+        + "\nUncommon:     " + foundTreasures.get(Treasure.UNCOMMON)
+        + "\nRare:         " + foundTreasures.get(Treasure.RARE)
+        + "\nUltra-Rare:   " + foundTreasures.get(Treasure.ULTRA_RARE)
+        + "\nLegendary:    " + foundTreasures.get(Treasure.LEGENDARY);
   }
 
   /**
-   * Compares the current user to the user based on their scores. If scores are equal, then
-   * the users are compared based on date joined. The larger scores and the earlier join
-   * dates are "greater"
+   * Compares the current user to the user based on their scores. If scores are equal, then the
+   * users are compared based on date joined. The larger scores and the earlier join dates are
+   * "greater"
    *
    * @param o User object that the current user is to be compared to
-   * @return a negative number, zero, or a positive number based on if the current user is
-   * less than, equal to, or greater than the given user
+   * @return a negative number, zero, or a positive number based on if the current user is less
+   * than, equal to, or greater than the given user
    */
   @Override
   public int compareTo(Object o) {

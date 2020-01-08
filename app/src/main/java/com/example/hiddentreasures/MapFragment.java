@@ -49,6 +49,7 @@ import java.util.List;
 
 public class MapFragment extends Fragment {
 
+  //fields
   private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
   private FirebaseDatabase database;
   private DatabaseReference users;
@@ -172,27 +173,34 @@ public class MapFragment extends Fragment {
                 private final IconGenerator iconGenerator = new IconGenerator(getContext());
 
                 @Override
-                protected void onBeforeClusterItemRendered(Treasure item, MarkerOptions markerOptions) {
+                protected void onBeforeClusterItemRendered(Treasure item,
+                    MarkerOptions markerOptions) {
                   super.onBeforeClusterItemRendered(item, markerOptions);
 
                   if (user.getTreasuresFoundTodayIDs().contains(item.getId())) {
-                    iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_found));
+                    iconGenerator
+                        .setBackground(getContext().getDrawable(R.drawable.ic_treasure_found));
                   } else {
                     switch (item.getRarity()) {
                       case Treasure.COMMON:
-                        iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_common));
+                        iconGenerator
+                            .setBackground(getContext().getDrawable(R.drawable.ic_treasure_common));
                         break;
                       case Treasure.UNCOMMON:
-                        iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_uncommon));
+                        iconGenerator.setBackground(
+                            getContext().getDrawable(R.drawable.ic_treasure_uncommon));
                         break;
                       case Treasure.RARE:
-                        iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_rare));
+                        iconGenerator
+                            .setBackground(getContext().getDrawable(R.drawable.ic_treasure_rare));
                         break;
                       case Treasure.ULTRA_RARE:
-                        iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_ultrarare));
+                        iconGenerator.setBackground(
+                            getContext().getDrawable(R.drawable.ic_treasure_ultrarare));
                         break;
                       case Treasure.LEGENDARY:
-                        iconGenerator.setBackground(getContext().getDrawable(R.drawable.ic_treasure_legendary));
+                        iconGenerator.setBackground(
+                            getContext().getDrawable(R.drawable.ic_treasure_legendary));
                         break;
                     }
                   }
@@ -223,7 +231,8 @@ public class MapFragment extends Fragment {
                   clusterManager.cluster();
 
                   new AlertDialog.Builder(getContext())
-                      .setTitle("Congratulations!\nYou found a " + treasure.getRarity() + " treasure!")
+                      .setTitle(
+                          "Congratulations!\nYou found a " + treasure.getRarity() + " treasure!")
                       .setNegativeButton("Ok",
                           ((dialog, which) ->
                               Toast.makeText(getContext(), "Keep Exploring!",
@@ -287,30 +296,29 @@ public class MapFragment extends Fragment {
     if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
         != PackageManager.PERMISSION_GRANTED) {
 
-      // Should we show an explanation?
+      // Check if we need to show explanation for location services
       if (ActivityCompat.shouldShowRequestPermissionRationale(
           getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-        // Show an explanation to the user *asynchronously* -- don't block
-        // this thread waiting for the user's response! After the user
-        // sees the explanation, try again to request the permission.
+        /*
+         * Show an explanation to the user asynchronously. After the user sees the explanation,
+         * try again to request the permission.
+         */
         new AlertDialog.Builder(getContext())
             .setTitle("Location Permission Needed")
-            .setMessage(
-                "This app needs the Location permission, please accept to use location functionality")
-            .setPositiveButton(
-                "OK",
-                (dialogInterface, which) -> {
-                  // Prompt the user once explanation has been shown
-                  ActivityCompat.requestPermissions(
-                      getActivity(),
-                      new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                      MY_PERMISSIONS_REQUEST_LOCATION);
-                })
+            .setMessage("This app needs location permissions to be used to its fullest. "
+                + "\nPlease accept to use location functionality")
+            .setPositiveButton("OK", (dialog, which) -> {
+              // Prompt the user once explanation has been shown
+              ActivityCompat.requestPermissions(
+                  getActivity(),
+                  new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                  MY_PERMISSIONS_REQUEST_LOCATION);
+            })
             .create()
             .show();
       } else {
-        // No explanation needed, we can request the permission.
+        // No explanation needed\
         ActivityCompat.requestPermissions(
             getActivity(),
             new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -322,13 +330,12 @@ public class MapFragment extends Fragment {
   @Override
   public void onRequestPermissionsResult(
       int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    if (requestCode
-        == MY_PERMISSIONS_REQUEST_LOCATION) { // If request is cancelled, the result arrays are
-      // empty.
+    if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+
+      // If request is cancelled, the result arrays are empty.
       if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-        // permission was granted, yay! Do the
-        // location-related task you need to do.
+        // Permission was granted. Access user's location.
         if (ContextCompat.checkSelfPermission(
             getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
@@ -339,9 +346,12 @@ public class MapFragment extends Fragment {
         }
       } else {
 
-        // permission denied, boo! Disable the
-        // functionality that depends on this permission.
-        Toast.makeText(getContext(), "permission denied", Toast.LENGTH_LONG).show();
+        // Permission denied. Don't access user's location.
+        Toast.makeText(
+            getContext(),
+            "permission denied",
+            Toast.LENGTH_LONG)
+            .show();
       }
     }
   }

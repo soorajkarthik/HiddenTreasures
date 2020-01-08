@@ -23,7 +23,8 @@ public class SignUpActivity extends AppCompatActivity {
   private Button btnSignUp, btnToLogIn;
 
   /**
-   * Get reference to Firebase Database, and the "Users" node Get reference to all components of the activity's view
+   * Get reference to Firebase Database, and the "Users" node Get reference to all components of the
+   * activity's view
    *
    * @param savedInstanceState the last saved state of the application
    */
@@ -43,6 +44,8 @@ public class SignUpActivity extends AppCompatActivity {
 
     btnSignUp = findViewById(R.id.btnSignUp);
     btnToLogIn = findViewById(R.id.btnToLogIn);
+
+    //When signUp button is pressed, try signing up user with the values they entered. If there is a problem, show error messages.
     btnSignUp.setOnClickListener(view -> {
 
       final User temp =
@@ -55,8 +58,7 @@ public class SignUpActivity extends AppCompatActivity {
       users.addListenerForSingleValueEvent(
           new ValueEventListener() {
             /**
-             * Creates and adds new user in Firebase if entered information is valid and username is
-             * unique
+             * Creates and adds new user in Firebase if entered information is valid and username is unique
              *
              * @param dataSnapshot a snapshot of the current state of the node in Firebase
              */
@@ -67,7 +69,9 @@ public class SignUpActivity extends AppCompatActivity {
               if (dataSnapshot.child(temp.getUsername()).exists()) {
 
                 Toast.makeText(
-                    getApplicationContext(), "This Username is Taken!", Toast.LENGTH_SHORT)
+                    getApplicationContext(),
+                    "This Username is Taken!",
+                    Toast.LENGTH_SHORT)
                     .show();
 
                 editUsername.setText("");
@@ -90,29 +94,22 @@ public class SignUpActivity extends AppCompatActivity {
                     .show();
               } else {
 
-                // Check to make sure entered password and password confirmation are exactly
-                // the same
-                if (editConfirmPassword
-                    .getText()
-                    .toString()
+                // Check to make sure password and password confirmation are exactly the same
+                if (editConfirmPassword.getText().toString()
                     .equals(editPassword.getText().toString())) {
 
-                  users
-                      .child(temp.getUsername())
-                      .setValue(
-                          temp); // Adds a new user to Firebase with the entered email,
-                  // username, and password
+                  // Adds a new user to Firebase with the entered email, username, and password
+                  users.child(temp.getUsername()).setValue(temp);
 
                   Toast.makeText(
-                      getApplicationContext(), "Registered Successfully!",
+                      getApplicationContext(),
+                      "Registered Successfully!",
                       Toast.LENGTH_SHORT)
                       .show();
 
-                  Intent myIntent =
-                      new Intent(getApplicationContext(), MainActivity.class);
-                  myIntent.putExtra(
-                      "username",
-                      temp.getUsername()); // Passes username to next activity
+                  // Sends user to MainActivity and passes username to the activity
+                  Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
+                  myIntent.putExtra("username", temp.getUsername());
                   startActivity(myIntent);
                 } else {
 
@@ -127,12 +124,14 @@ public class SignUpActivity extends AppCompatActivity {
               }
             }
 
+            //Method required by ValueEventListener
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
           });
     });
 
+    //If toLogIn button is clicked, send user to LoginActivity
     btnToLogIn.setOnClickListener(view -> {
       Intent myIntent = new Intent(getApplicationContext(), LoginActivity.class);
       startActivity(myIntent);

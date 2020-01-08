@@ -55,10 +55,8 @@ public class SocialFragment extends Fragment {
           @Override
           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             friendList.clear();
-            user.getFriendList()
-                .forEach(
-                    friendName ->
-                        friendList.add(dataSnapshot.child(friendName).getValue(User.class)));
+            user.getFriendList().forEach(friendName ->
+                friendList.add(dataSnapshot.child(friendName).getValue(User.class)));
             friendList.add(user.placeHolderUser());
             friendList.sort(User::compareTo);
             friendListView.setAdapter(new FriendListAdapter(getContext(), friendList));
@@ -98,10 +96,10 @@ public class SocialFragment extends Fragment {
     searchView.setQueryHint("Start typing to search");
     searchView.setOnQueryTextListener(
         new SearchView.OnQueryTextListener() {
-          /** Required method, no action necessary */
+
+          //Method required by onQueryTextListener
           @Override
           public boolean onQueryTextSubmit(String query) {
-
             return false;
           }
 
@@ -175,8 +173,8 @@ public class SocialFragment extends Fragment {
   }
 
   /**
-   * Filters usernames based on user's input Stores filtered usernames in a new ArrayList Updates display with search
-   * results
+   * Filters usernames based on user's input Stores filtered usernames in a new ArrayList Updates
+   * display with search results
    *
    * @param searchText the user's input
    */
@@ -425,24 +423,22 @@ public class SocialFragment extends Fragment {
 
               User requestSender = dataSnapshot.child(request.getUsername()).getValue(User.class);
 
-              holder.btnAccept.setOnClickListener(
-                  v -> {
-                    user.acceptFriendRequest(friendRequests.get(i));
-                    requestSender.addFriend(user.getUsername());
+              holder.btnAccept.setOnClickListener(view -> {
+                user.acceptFriendRequest(friendRequests.get(i));
+                requestSender.addFriend(user.getUsername());
 
-                    users.child(user.getUsername()).setValue(user);
-                    users.child(requestSender.getUsername()).setValue(requestSender);
-                    requestListView.setAdapter(
-                        new FriendRequestAdapter(getContext(), user.getFriendRequests()));
-                  });
+                users.child(user.getUsername()).setValue(user);
+                users.child(requestSender.getUsername()).setValue(requestSender);
+                requestListView.setAdapter(
+                    new FriendRequestAdapter(getContext(), user.getFriendRequests()));
+              });
 
-              holder.btnDelete.setOnClickListener(
-                  v -> {
-                    user.removeFriendRequest(friendRequests.get(i));
-                    users.child(user.getUsername()).setValue(user);
-                    requestListView.setAdapter(
-                        new FriendRequestAdapter(getContext(), user.getFriendRequests()));
-                  });
+              holder.btnDelete.setOnClickListener(view -> {
+                user.removeFriendRequest(friendRequests.get(i));
+                users.child(user.getUsername()).setValue(user);
+                requestListView.setAdapter(
+                    new FriendRequestAdapter(getContext(), user.getFriendRequests()));
+              });
             }
 
             @Override
@@ -571,11 +567,8 @@ public class SocialFragment extends Fragment {
   class UserSearchAdapter extends BaseAdapter {
 
     int count;
-
     Context context;
-
     private LayoutInflater layoutInflater;
-
     private ArrayList<User> filterUserList;
 
     /**
@@ -672,36 +665,33 @@ public class SocialFragment extends Fragment {
 
               switch (requestType) {
                 case SENT:
-                  holder.updateFriendStatus.setOnClickListener(
-                      (View view) -> {
-                        searchedUser.removeFriendRequestFromUser(username);
-                        users.child(searchedUser.getUsername()).setValue(searchedUser);
-                        updateSearchResults(searchView.getQuery().toString());
-                      });
+                  holder.updateFriendStatus.setOnClickListener(view -> {
+                    searchedUser.removeFriendRequestFromUser(username);
+                    users.child(searchedUser.getUsername()).setValue(searchedUser);
+                    updateSearchResults(searchView.getQuery().toString());
+                  });
 
                   break;
 
                 case ACCEPTED:
-                  holder.updateFriendStatus.setOnClickListener(
-                      (View view) -> {
-                        user.removeFriend(searchedUser.getUsername());
-                        searchedUser.removeFriend(username);
+                  holder.updateFriendStatus.setOnClickListener(view -> {
+                    user.removeFriend(searchedUser.getUsername());
+                    searchedUser.removeFriend(username);
 
-                        users.child(searchedUser.getUsername()).setValue(searchedUser);
-                        users.child(username).setValue(user);
-                        updateSearchResults(searchView.getQuery().toString());
-                      });
+                    users.child(searchedUser.getUsername()).setValue(searchedUser);
+                    users.child(username).setValue(user);
+                    updateSearchResults(searchView.getQuery().toString());
+                  });
 
                   break;
 
                 case NONE:
-                  holder.updateFriendStatus.setOnClickListener(
-                      (View view) -> {
-                        searchedUser.addFriendRequest(
-                            new FriendRequest(System.currentTimeMillis(), username));
-                        users.child(searchedUser.getUsername()).setValue(searchedUser);
-                        updateSearchResults(searchView.getQuery().toString());
-                      });
+                  holder.updateFriendStatus.setOnClickListener(view -> {
+                    searchedUser.addFriendRequest(
+                        new FriendRequest(System.currentTimeMillis(), username));
+                    users.child(searchedUser.getUsername()).setValue(searchedUser);
+                    updateSearchResults(searchView.getQuery().toString());
+                  });
 
                   break;
               }
