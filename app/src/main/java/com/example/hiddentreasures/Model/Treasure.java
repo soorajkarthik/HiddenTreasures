@@ -5,6 +5,7 @@ import com.google.maps.android.clustering.ClusterItem;
 
 public class Treasure implements ClusterItem {
 
+  //Fields
   public static final String COMMON = "COMMON";
   public static final String UNCOMMON = "UNCOMMON";
   public static final String RARE = "RARE";
@@ -19,6 +20,14 @@ public class Treasure implements ClusterItem {
   public Treasure() {
   }
 
+  /**
+   * Constructor
+   *
+   * @param latitude  Latitude of the treasure's position
+   * @param longitude Longitude of the treasure's position
+   * @param rarity    Rarity of the treasure (Common, Uncommon, Rare, Ultra-Rare, Legendary)
+   * @param id        Unique ID of the treasure
+   */
   public Treasure(double latitude, double longitude, String rarity, int id) {
     this.latitude = latitude;
     this.longitude = longitude;
@@ -26,6 +35,7 @@ public class Treasure implements ClusterItem {
     this.id = id;
   }
 
+  //"Getter" and "Setter" methods
   public double getLatitude() {
     return latitude;
   }
@@ -58,6 +68,7 @@ public class Treasure implements ClusterItem {
     this.id = id;
   }
 
+  //Required methods to implement ClusterItem
   @Override
   public LatLng getPosition() {
     return new LatLng(latitude, longitude);
