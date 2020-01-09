@@ -206,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
           /**
            * Changes color and text of Toolbar and TabLayout based on the selected tab
+           *
            * @param tab the selected tab
            */
           @Override

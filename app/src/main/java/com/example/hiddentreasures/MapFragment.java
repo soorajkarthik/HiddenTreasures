@@ -67,7 +67,13 @@ public class MapFragment extends Fragment {
   private FusedLocationProviderClient fusedLocationClient;
   private Circle currentDrawnCircle;
 
-  private LocationCallback locationCallback = new LocationCallback() {
+  private final LocationCallback locationCallback = new LocationCallback() {
+    /**
+     * Sets user's current location based on the location result and moves map camera to initially
+     * be centered on the user
+     *
+     * @param locationResult Object containing all of the user's locations since opening the app
+     */
     @Override
     public void onLocationResult(LocationResult locationResult) {
       List<Location> locationList = locationResult.getLocations();
@@ -84,6 +90,15 @@ public class MapFragment extends Fragment {
     }
   };
 
+  /**
+   * Get reference to Firebase Database, the "Treasures" and "Users" nodes, the current user from
+   * MainActivity and the components of the fragment's view.
+   *
+   * @param inflater           The LayoutInflater used by the MainActivity
+   * @param container          The ViewGroup that this fragment is a part of
+   * @param savedInstanceState The last saved state of the application
+   * @return The view corresponding to this fragment
+   */
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -121,6 +136,12 @@ public class MapFragment extends Fragment {
     return view;
   }
 
+  /**
+   * Once the view is created, creates the mapView
+   *
+   * @param view               The view corresponding to this fragment
+   * @param savedInstanceState The last saved state of the application
+   */
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -128,11 +149,24 @@ public class MapFragment extends Fragment {
     mapView.onCreate(savedInstanceState);
   }
 
+  /**
+   * Inflates options menu
+   *
+   * @param menu     Menu used by the current activity
+   * @param inflater MenuInflater used by the current activity
+   */
   @Override
   public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
     inflater.inflate(R.menu.menu_map, menu);
   }
 
+  /**
+   * Inflates help dialog when user clicks help button
+   *
+   * @param item the item selected by the user
+   * @return true because there is no need for system processing, all processing necessary
+   * processing is done in the method
+   */
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     if (item.getItemId() == R.id.optHelp) {
@@ -155,6 +189,11 @@ public class MapFragment extends Fragment {
     return true;
   }
 
+  /**
+   * Loads Google Map asynchronously. Requests for permission to access user's location if
+   * permission has not been granted yet. Sets up ClusterManager which allows for clustering of
+   * treasure markers. Sets up treasures behavior when clicked.
+   */
   private void loadMap() {
 
     mapView.getMapAsync(
@@ -165,11 +204,13 @@ public class MapFragment extends Fragment {
           mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
           mGoogleMap.setMinZoomPreference(11.5f);
 
+          //This algorithm allows for a more natural spread of clusters on the map rather than a grid
           clusterManager = new ClusterManager<>(getContext(), mGoogleMap);
           clusterManager.setAlgorithm(new NonHierarchicalDistanceBasedAlgorithm<>());
 
           clusterManager.setRenderer(
               new DefaultClusterRenderer<Treasure>(getContext(), mGoogleMap, clusterManager) {
+
                 private final IconGenerator iconGenerator = new IconGenerator(getContext());
 
                 @Override
@@ -178,8 +219,8 @@ public class MapFragment extends Fragment {
                   super.onBeforeClusterItemRendered(item, markerOptions);
 
                   if (user.getTreasuresFoundTodayIDs().contains(item.getId())) {
-                    iconGenerator
-                        .setBackground(getContext().getDrawable(R.drawable.ic_treasure_found));
+                    iconGenerator.setBackground(
+                        getContext().getDrawable(R.drawable.ic_treasure_found));
                   } else {
                     switch (item.getRarity()) {
                       case Treasure.COMMON:
@@ -356,6 +397,13 @@ public class MapFragment extends Fragment {
     }
   }
 
+  //Lifecycle methods that help improve performance of Google Map
+  @Override
+  public void onStart() {
+    super.onStart();
+    mapView.onStart();
+  }
+
   @Override
   public void onResume() {
     super.onResume();
@@ -372,6 +420,18 @@ public class MapFragment extends Fragment {
   public void onStop() {
     super.onStop();
     mapView.onStop();
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    mapView.onDestroy();
+  }
+
+  @Override
+  public void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    mapView.onSaveInstanceState(outState);
   }
 
   @Override
