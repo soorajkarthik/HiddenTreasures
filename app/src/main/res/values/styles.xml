@@ -27,4 +27,5 @@
   <style name="AppTheme.AlertDialog.TextAppearance" parent="TextAppearance.AppCompat">
     <item name="android:fontFamily">@font/droid_sans_mono</item>
   </style>
+
 </resources>
