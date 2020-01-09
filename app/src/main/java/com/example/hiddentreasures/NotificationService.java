@@ -19,13 +19,10 @@ public class NotificationService extends FirebaseMessagingService {
   public void onMessageReceived(RemoteMessage remoteMessage) {
 
     Handler handler = new Handler(Looper.getMainLooper());
-    handler.post(() -> {
-      Toast.makeText(
-          getApplicationContext(),
-          remoteMessage.getNotification().getBody(),
-          Toast.LENGTH_LONG)
-          .show();
-    });
+    handler.post(() -> Toast.makeText(
+        getApplicationContext(),
+        remoteMessage.getNotification().getBody(),
+        Toast.LENGTH_LONG)
+        .show());
   }
-  
 }
