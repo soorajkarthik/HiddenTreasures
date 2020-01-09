@@ -46,23 +46,13 @@
     app:layout_constraintStart_toStartOf="parent"/>
 
   <TextView
-    android:id="@+id/timeReceived"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="0dp"
-    android:text="Received:"
-    android:textSize="14sp"
-    app:layout_constraintStart_toStartOf="@id/usernameText"
-    app:layout_constraintTop_toTopOf="@id/btnDelete"/>
-
-  <TextView
     android:id="@+id/timeReceivedText"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
+    android:layout_marginStart="0dp"
     android:text="Time Text"
     android:textSize="14sp"
-    app:layout_constraintStart_toEndOf="@id/timeReceived"
+    app:layout_constraintStart_toStartOf="@id/usernameText"
     app:layout_constraintTop_toTopOf="@id/btnDelete"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -30,6 +30,15 @@ public class ProfileFragment extends Fragment {
   private User user;
   private View view;
 
+  /**
+   * Get reference to Firebase Database, the "Users" nodes, the current user from MainActivity
+   * and inflates the fragment's view.
+   *
+   * @param inflater           The LayoutInflater used by the MainActivity
+   * @param container          The ViewGroup that this fragment is a part of
+   * @param savedInstanceState The last saved state of the application
+   * @return The view corresponding to this fragment
+   */
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

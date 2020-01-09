@@ -236,7 +236,7 @@ public class SocialFragment extends Fragment {
       return minutes + " minute(s) ago";
     } else {
 
-      return "Online";
+      return "Just Now";
     }
   }
 

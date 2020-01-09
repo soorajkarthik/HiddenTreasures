@@ -92,7 +92,7 @@ public class MapFragment extends Fragment {
 
   /**
    * Get reference to Firebase Database, the "Treasures" and "Users" nodes, the current user from
-   * MainActivity and the components of the fragment's view.
+   * MainActivity and inflates the fragments view
    *
    * @param inflater           The LayoutInflater used by the MainActivity
    * @param container          The ViewGroup that this fragment is a part of
