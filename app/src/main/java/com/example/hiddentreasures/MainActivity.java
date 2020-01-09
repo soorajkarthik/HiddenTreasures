@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import com.example.hiddentreasures.Model.User;
 import com.google.android.material.tabs.TabLayout;
@@ -32,6 +33,12 @@ public class MainActivity extends AppCompatActivity {
   private ArrayList<User> userList, friendList;
   private boolean hasUpdatedNotificationToken, isTabLayoutSetUpDone;
 
+  /**
+   * Get reference to all components of the activity's view Get reference to Firebase Database, and
+   * the "Users" node
+   *
+   * @param savedInstanceState the last saved state of the application
+   */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
 
@@ -51,12 +58,18 @@ public class MainActivity extends AppCompatActivity {
     updateUser();
   }
 
+  //Updates user's last seen in Firebase when they reopen the app
   @Override
   protected void onResume() {
     super.onResume();
     updateLastSeen();
   }
 
+  /**
+   * Checks to see if the user has already seen the app instructions. If they haven't, show them the
+   * instructions dialog and save that they've seen it in SharedPreferences. If they have, don't
+   * show the instructions dialog again.
+   */
   private void showInstructions() {
     SharedPreferences pref =
         getApplicationContext().getSharedPreferences("MyPref", 0);
@@ -92,8 +105,13 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
+  /**
+   * Updates the local reference to the user, user's friend list, and list of all users. Also sets
+   * up the TabView the first time the method is called.
+   */
   private void updateUser() {
 
+    //Ensures that local reference to user is updated every time the user is modified in Firebase
     users.addValueEventListener(
         new ValueEventListener() {
           @Override
@@ -116,14 +134,19 @@ public class MainActivity extends AppCompatActivity {
             friendList.add(user.placeHolderUser());
             friendList.sort(User::compareTo);
 
+            /*
+             * Updates user's notification token that directs notifications to the last device they
+             * were logged into. Ensures that notification token is set up after initial reference
+             * to user is received.
+             */
             if (!hasUpdatedNotificationToken) {
               updateNotificationToken();
             }
 
             /*
-             * Ensures that tablayout is set up after initial reference to user is received
-             * Ensures tablayout is only set up once
-             * Sets the tab that is seen when the app is opened to the step counter tab
+             * Ensures that tablayout is set up after initial reference to user is received. Ensures
+             * tablayout is only set up once. Sets the tab that is seen when the app is opened
+             * to the map tab
              */
             if (!isTabLayoutSetUpDone) {
               setUpLayout();
@@ -138,6 +161,9 @@ public class MainActivity extends AppCompatActivity {
         });
   }
 
+  /**
+   * Updates the user's notification token to their current device's unique token.
+   */
   private void updateNotificationToken() {
     FirebaseInstanceId.getInstance()
         .getInstanceId()
@@ -152,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
             });
   }
 
+  //Updates the user's last seen time in Firebase
   private void updateLastSeen() {
 
     if (user != null) {
@@ -160,6 +187,10 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
+  /**
+   * Sets up Toolbar and TabLayout. Connects ViewPager to TabLayout allowing user too scroll through
+   * tabs seamlessly
+   */
   private void setUpLayout() {
 
     toolbar = findViewById(R.id.toolbar);
@@ -172,6 +203,11 @@ public class MainActivity extends AppCompatActivity {
 
     tabLayout.addOnTabSelectedListener(
         new TabLayout.OnTabSelectedListener() {
+
+          /**
+           * Changes color and text of Toolbar and TabLayout based on the selected tab
+           * @param tab the selected tab
+           */
           @Override
           public void onTabSelected(TabLayout.Tab tab) {
 
@@ -179,15 +215,42 @@ public class MainActivity extends AppCompatActivity {
 
             switch (tab.getPosition()) {
               case 0:
-                getSupportActionBar().setTitle("Social");
+                toolbar.setBackgroundColor(ContextCompat
+                    .getColor(getApplicationContext(), android.R.color.holo_blue_dark));
+
+                tabLayout.setBackgroundColor(ContextCompat
+                    .getColor(getApplicationContext(), android.R.color.holo_blue_dark));
+
+                getWindow().setStatusBarColor(ContextCompat
+                    .getColor(getApplicationContext(), android.R.color.holo_blue_dark));
+
+                toolbar.setTitle("Social");
                 break;
 
               case 1:
-                getSupportActionBar().setTitle("Map");
+                toolbar.setBackgroundColor(
+                    ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+
+                tabLayout.setBackgroundColor(
+                    ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+
+                getWindow().setStatusBarColor(
+                    ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+
+                toolbar.setTitle("Map");
                 break;
 
               case 2:
-                getSupportActionBar().setTitle("Profile");
+                toolbar.setBackgroundColor(
+                    ContextCompat.getColor(MainActivity.this, R.color.colorPrimaryDark));
+
+                tabLayout.setBackgroundColor(
+                    ContextCompat.getColor(MainActivity.this, R.color.colorPrimaryDark));
+
+                getWindow().setStatusBarColor(
+                    ContextCompat.getColor(MainActivity.this, R.color.colorPrimaryDark));
+
+                toolbar.setTitle("Profile");
                 break;
 
               default:
@@ -195,12 +258,12 @@ public class MainActivity extends AppCompatActivity {
             }
           }
 
-          // Required method
+          // Method required by OnTabSelectedListener
           @Override
           public void onTabUnselected(TabLayout.Tab tab) {
           }
 
-          // Required method
+          // Method required by OnTabSelectedListener
           @Override
           public void onTabReselected(TabLayout.Tab tab) {
           }
@@ -212,19 +275,34 @@ public class MainActivity extends AppCompatActivity {
     showInstructions();
   }
 
+  /**
+   * Public so method can be accessed by fragments
+   *
+   * @return Current instance of user
+   */
   public User getUser() {
     return user;
   }
 
+  /**
+   * Public so method can be accessed by fragments
+   *
+   * @return Returns current instance of list of all users
+   */
   public ArrayList<User> getUserList() {
     return userList;
   }
 
+  /**
+   * Public so method can be accessed by fragments
+   *
+   * @return Returns current instance of user's friend list
+   */
   public ArrayList<User> getFriendList() {
     return friendList;
   }
 
-  // effectively disables back button so user cannot go back without logging out
+  //Disables back button so user must logout to go back to login screen
   @Override
   public void onBackPressed() {
     return;
