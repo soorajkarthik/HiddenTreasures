@@ -137,7 +137,7 @@ public class MapFragment extends Fragment {
   }
 
   /**
-   * Once the view is created, creates the mapView
+   * Creates components of mapView once the fragment's view has been inflated
    *
    * @param view               The view corresponding to this fragment
    * @param savedInstanceState The last saved state of the application
@@ -179,7 +179,7 @@ public class MapFragment extends Fragment {
                   + "\n\t\t- Blue - Common - 100 Points"
                   + "\n\t\t- Green - Uncommon - 250 Points"
                   + "\n\t\t- Yellow - Rare - 500 Points"
-                  + "\n\t\t- Orange - Ultra-Rare - 1000 Points"
+                  + "\n\t\t- Orange - Ultra-Rare - 1500 Points"
                   + "\n\t\t- Red - Legendary - 5000 Points")
           .setNegativeButton("Ok", (dialog, which) -> dialog.dismiss())
           .create()
@@ -202,7 +202,7 @@ public class MapFragment extends Fragment {
 
           mGoogleMap = googleMap;
           mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-          mGoogleMap.setMinZoomPreference(11.5f);
+          //mGoogleMap.setMinZoomPreference(11.5f);
 
           //This algorithm allows for a more natural spread of clusters on the map rather than a grid
           clusterManager = new ClusterManager<>(getContext(), mGoogleMap);
@@ -213,10 +213,16 @@ public class MapFragment extends Fragment {
 
                 private final IconGenerator iconGenerator = new IconGenerator(getContext());
 
+                /**
+                 * Determines what icon each marker should have based on the treasure's rarity and
+                 * whether or not the user has already found that treasure and generates that icon.
+                 *
+                 * @param item The treasure item that is being rendered
+                 * @param markerOptions The options that determine how the marker looks
+                 */
                 @Override
                 protected void onBeforeClusterItemRendered(Treasure item,
                     MarkerOptions markerOptions) {
-                  super.onBeforeClusterItemRendered(item, markerOptions);
 
                   if (user.getTreasuresFoundTodayIDs().contains(item.getId())) {
                     iconGenerator.setBackground(
@@ -224,16 +230,16 @@ public class MapFragment extends Fragment {
                   } else {
                     switch (item.getRarity()) {
                       case Treasure.COMMON:
-                        iconGenerator
-                            .setBackground(getContext().getDrawable(R.drawable.ic_treasure_common));
+                        iconGenerator.setBackground(
+                            getContext().getDrawable(R.drawable.ic_treasure_common));
                         break;
                       case Treasure.UNCOMMON:
                         iconGenerator.setBackground(
                             getContext().getDrawable(R.drawable.ic_treasure_uncommon));
                         break;
                       case Treasure.RARE:
-                        iconGenerator
-                            .setBackground(getContext().getDrawable(R.drawable.ic_treasure_rare));
+                        iconGenerator.setBackground(
+                            getContext().getDrawable(R.drawable.ic_treasure_rare));
                         break;
                       case Treasure.ULTRA_RARE:
                         iconGenerator.setBackground(
@@ -251,18 +257,24 @@ public class MapFragment extends Fragment {
                 }
               });
 
+          //Processing done when a treasure marker is clicked on the map
           clusterManager.setOnClusterItemClickListener(
               treasure -> {
                 Location temp = new Location("");
                 temp.setLatitude(treasure.getLatitude());
                 temp.setLongitude(treasure.getLongitude());
 
+                //Calculates distance in meters
                 float distance = currentLocation.distanceTo(temp);
 
                 if (currentDrawnCircle != null) {
                   currentDrawnCircle.remove();
                 }
 
+                /*
+                 * If distance is less than 250 meters, shows dialog congratulating user on finding
+                 * a treasure and re-renders map so marker of treasure changes to its "found" icon
+                 */
                 if (distance <= 250
                     && !user.getTreasuresFoundTodayIDs().contains(treasure.getId())) {
                   user.addFoundTreasure(treasure);
@@ -281,7 +293,14 @@ public class MapFragment extends Fragment {
                                   .show()))
                       .create()
                       .show();
-                } else if (!user.getTreasuresFoundTodayIDs().contains(treasure.getId())) {
+                }
+
+                /*
+                 * If treasure is greater than 250 meters away and still hasn't been found by user,
+                 * then show a circle with radius 250 meters so user knows how close they must
+                 * get to the treasure. Zooms in on location.
+                 */
+                else if (!user.getTreasuresFoundTodayIDs().contains(treasure.getId())) {
 
                   currentDrawnCircle = mGoogleMap.addCircle(
                       new CircleOptions()
@@ -298,9 +317,11 @@ public class MapFragment extends Fragment {
 
           treasureList.forEach(treasure -> clusterManager.addItem(treasure));
 
+          //Allows map idling and marker clicks to be handled by the ClusterManager
           mGoogleMap.setOnCameraIdleListener(clusterManager);
           mGoogleMap.setOnMarkerClickListener(clusterManager);
 
+          //Removes circle around treasure if empty spot on map is clicked
           mGoogleMap.setOnMapClickListener(
               latLng -> {
                 if (currentDrawnCircle != null) {
@@ -308,32 +329,36 @@ public class MapFragment extends Fragment {
                 }
               });
 
+          //Removes circle around treasure if user zooms out past a set distance
           mGoogleMap.setOnCameraMoveListener(() -> {
             if (mGoogleMap.getCameraPosition().zoom < 14f && currentDrawnCircle != null) {
               currentDrawnCircle.remove();
             }
           });
 
+          //Initializes location request to retrieves user's location every 2.5 seconds
           locationRequest = new LocationRequest();
-          locationRequest.setInterval(5000); // five second interval
-          locationRequest.setFastestInterval(1000);
+          locationRequest.setInterval(2500); // five second interval
+          locationRequest.setFastestInterval(2500);
           locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-          if (ContextCompat.checkSelfPermission(
-              getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-              == PackageManager.PERMISSION_GRANTED) {
-            // Location Permission already granted
+          /*
+           * If location permission has been granted, start looping location request client
+           * If not, request permission to access user's location
+           */
+
+          if (ContextCompat.checkSelfPermission(getContext(),
+              Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.requestLocationUpdates(
                 locationRequest, locationCallback, Looper.myLooper());
             mGoogleMap.setMyLocationEnabled(true);
           } else {
-            // Request Location Permission
-            checkLocationPermission();
+            requestLocationPermission();
           }
         });
   }
 
-  private void checkLocationPermission() {
+  private void requestLocationPermission() {
     if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
         != PackageManager.PERMISSION_GRANTED) {
 
@@ -359,7 +384,7 @@ public class MapFragment extends Fragment {
             .create()
             .show();
       } else {
-        // No explanation needed\
+        // No explanation needed
         ActivityCompat.requestPermissions(
             getActivity(),
             new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -376,7 +401,10 @@ public class MapFragment extends Fragment {
       // If request is cancelled, the result arrays are empty.
       if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-        // Permission was granted. Access user's location.
+        /*
+         * If permission was granted, access user's location. If not, don't access user's
+         * location and don't set their current location on the Google Map
+         */
         if (ContextCompat.checkSelfPermission(
             getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
@@ -387,7 +415,6 @@ public class MapFragment extends Fragment {
         }
       } else {
 
-        // Permission denied. Don't access user's location.
         Toast.makeText(
             getContext(),
             "permission denied",
