@@ -174,7 +174,8 @@ public class MapFragment extends Fragment {
           .setTitle("Help")
           .setMessage(
               "\n- Pinch to zoom"
-                  + "\n- Move within a treasure's circle to collect it"
+                  + "\n- Move within a treasure's circle"
+                  + "\n  to collect it"
                   + "\n- Color Cheat-Sheet:"
                   + "\n\t\t- Blue - Common - 100 Points"
                   + "\n\t\t- Green - Uncommon - 250 Points"
@@ -200,9 +201,13 @@ public class MapFragment extends Fragment {
         googleMap -> {
           MapsInitializer.initialize(getContext());
 
+          /*
+           * Sets map to regular styled Google Map and restricts zooming out beyond a certain point
+           * as ClusterManager render speeds suffer if zoomed out too far
+           */
           mGoogleMap = googleMap;
           mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-          //mGoogleMap.setMinZoomPreference(11.5f);
+          mGoogleMap.setMinZoomPreference(11.5f);
 
           //This algorithm allows for a more natural spread of clusters on the map rather than a grid
           clusterManager = new ClusterManager<>(getContext(), mGoogleMap);
