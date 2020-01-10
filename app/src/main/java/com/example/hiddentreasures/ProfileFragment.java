@@ -24,6 +24,7 @@ import java.util.Date;
 
 public class ProfileFragment extends Fragment {
 
+  //Fields
   private FirebaseDatabase database;
   private DatabaseReference users;
   private String username;
@@ -31,8 +32,8 @@ public class ProfileFragment extends Fragment {
   private View view;
 
   /**
-   * Get reference to Firebase Database, the "Users" nodes, the current user from MainActivity
-   * and inflates the fragment's view.
+   * Get reference to Firebase Database, the "Users" nodes, the current user from MainActivity and
+   * inflates the fragment's view.
    *
    * @param inflater           The LayoutInflater used by the MainActivity
    * @param container          The ViewGroup that this fragment is a part of
@@ -53,6 +54,13 @@ public class ProfileFragment extends Fragment {
     return view;
   }
 
+  /**
+   * Gets reference to all the text views that make up the user's summary and sets them to their
+   * corresponding values
+   *
+   * @param view               The view corresponding to this fragment
+   * @param savedInstanceState The last saved state of the application
+   */
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
@@ -93,12 +101,25 @@ public class ProfileFragment extends Fragment {
         .setText(user.getFoundTreasures().get(Treasure.LEGENDARY) + "");
   }
 
+  /**
+   * Inflates options menu
+   *
+   * @param menu     Menu used by the current activity
+   * @param inflater MenuInflater used by the current activity
+   */
   @Override
   public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
 
     inflater.inflate(R.menu.menu_profile, menu);
   }
 
+  /**
+   * Inflates help dialog to confirm user's logout when user clicks logout button
+   *
+   * @param item the item selected by the user
+   * @return true because there is no need for system processing, all processing necessary
+   * processing is done in the method
+   */
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -110,6 +131,7 @@ public class ProfileFragment extends Fragment {
             SharedPreferences pref =
                 getActivity().getApplicationContext().getSharedPreferences("MyPref", 0);
 
+            //Removes stored username from device so user must login again when they reopen the app
             SharedPreferences.Editor editor = pref.edit();
             editor.remove("username");
             editor.apply();
