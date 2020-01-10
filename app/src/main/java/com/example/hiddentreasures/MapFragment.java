@@ -49,7 +49,7 @@ import java.util.List;
 
 public class MapFragment extends Fragment {
 
-  //fields
+  //Fields
   private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
   private FirebaseDatabase database;
   private DatabaseReference users;
