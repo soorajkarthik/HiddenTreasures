@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
    * on, stay on current screen. Get reference to Firebase Database, and the "Users" node. Get
    * reference to all components of the activity's view
    *
-   * @param savedInstanceState the last saved state of the application
+   * @param savedInstanceState The last saved state of the application
    */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +76,8 @@ public class LoginActivity extends AppCompatActivity {
    * Check to see if there is a user in Firebase with the entered username and password combination.
    * If there is, send user to MainActivity. If not, show error dialogs.
    *
-   * @param username entered username
-   * @param password entered password
+   * @param username The entered username
+   * @param password The entered password
    */
   private void logIn(final String username, final String password) {
 

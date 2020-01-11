@@ -13,7 +13,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
    * Constructor
    *
    * @param fragmentManager FragmentManager used by the current activity
-   * @param numOfTabs       number of tabs in TabLayout
+   * @param numOfTabs       The number of tabs in TabLayout
    */
   public PagerAdapter(FragmentManager fragmentManager, int numOfTabs) {
 
@@ -22,7 +22,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
   }
 
   /**
-   * @param position current position of ViewPager that PagerAdapter is attached to
+   * @param position Current position of ViewPager that PagerAdapter is attached to
    * @return Fragment based on position
    */
   @Override
@@ -44,7 +44,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
   }
 
   /**
-   * @return number of tabs in TabLayout
+   * @return The number of tabs in TabLayout
    */
   @Override
   public int getCount() {

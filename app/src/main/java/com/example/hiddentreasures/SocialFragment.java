@@ -216,7 +216,7 @@ public class SocialFragment extends Fragment {
    * Filters users based on user's input. Stores filtered users in a new ArrayList and updates
    * display with search results
    *
-   * @param searchText the user's input
+   * @param searchText The user's input
    */
   private void updateSearchResults(String searchText) {
 
@@ -680,7 +680,7 @@ public class SocialFragment extends Fragment {
              * has already sent a friend request, allow them to cancel the request. If neither,
              * allow user to send the searchedUser a friend request
              *
-             * @param dataSnapshot snapshot of the Users node in its current state
+             * @param dataSnapshot Snapshot of the Users node in its current state
              */
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
    * Get reference to all components of the activity's view Get reference to Firebase Database, and
    * the "Users" node
    *
-   * @param savedInstanceState the last saved state of the application
+   * @param savedInstanceState The last saved state of the application
    */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
           /**
            * Changes color and text of Toolbar and TabLayout based on the selected tab
            *
-           * @param tab the selected tab
+           * @param tab The selected tab
            */
           @Override
           public void onTabSelected(TabLayout.Tab tab) {

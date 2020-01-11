@@ -26,7 +26,7 @@ public class SignUpActivity extends AppCompatActivity {
    * Get reference to Firebase Database, and the "Users" node Get reference to all components of the
    * activity's view
    *
-   * @param savedInstanceState the last saved state of the application
+   * @param savedInstanceState The last saved state of the application
    */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
             /**
              * Creates and adds new user in Firebase if entered information is valid and username is unique
              *
-             * @param dataSnapshot a snapshot of the current state of the node in Firebase
+             * @param dataSnapshot Snapshot of the Users node in its current state
              */
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
