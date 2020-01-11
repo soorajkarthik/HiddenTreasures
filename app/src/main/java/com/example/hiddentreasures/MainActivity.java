@@ -111,7 +111,10 @@ public class MainActivity extends AppCompatActivity {
    */
   private void updateUser() {
 
-    //Ensures that local reference to user is updated every time the user is modified in Firebase
+    /*
+     * Ensures that local reference to user, user friend list, and list of all users are
+     * updated every time the user is modified in Firebase
+     */
     users.addValueEventListener(
         new ValueEventListener() {
           @Override
@@ -161,9 +164,7 @@ public class MainActivity extends AppCompatActivity {
         });
   }
 
-  /**
-   * Updates the user's notification token to their current device's unique token.
-   */
+  //Updates the user's notification token to their current device's unique token.
   private void updateNotificationToken() {
     FirebaseInstanceId.getInstance()
         .getInstanceId()

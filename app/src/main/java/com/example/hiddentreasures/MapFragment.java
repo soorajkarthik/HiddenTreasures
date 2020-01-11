@@ -163,8 +163,8 @@ public class MapFragment extends Fragment {
   /**
    * Inflates help dialog when user clicks help button
    *
-   * @param item the item selected by the user
-   * @return true because there is no need for system processing, all processing necessary
+   * @param item The item selected by the user
+   * @return True because there is no need for system processing, all processing necessary
    * processing is done in the method
    */
   @Override

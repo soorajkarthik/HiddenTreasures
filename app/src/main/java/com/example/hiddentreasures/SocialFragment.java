@@ -30,15 +30,26 @@ import java.util.stream.Collectors;
 
 public class SocialFragment extends Fragment {
 
+  //Fields
   private FirebaseDatabase database;
   private DatabaseReference users;
   private String username;
   private User user;
   private ArrayList<User> userList, friendList;
   private View view;
-  private ListView friendListView, requestListView, leaderboardListView, searchListView;
+  private ListView friendListView, requestListView, leaderboardListView, searchResultsListView;
   private SearchView searchView;
 
+  /**
+   * Get reference to Firebase Database, the "Treasures" and "Users" nodes, the current user from
+   * MainActivity and inflates the fragments view. Sets up list view that holds user's friend list
+   * and gets reference to the list view that holds user search results.
+   *
+   * @param inflater           The LayoutInflater used by the MainActivity
+   * @param container          The ViewGroup that this fragment is a part of
+   * @param savedInstanceState The last saved state of the application
+   * @return The view corresponding to this fragment
+   */
   @Override
   public View onCreateView(
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +61,10 @@ public class SocialFragment extends Fragment {
     friendList = ((MainActivity) getActivity()).getFriendList();
     username = user.getUsername();
 
+    /*
+     * Ensures that friendList is updated each time the user either accepts a friend request
+     * or removes an existing friend
+     */
     users.addValueEventListener(
         new ValueEventListener() {
           @Override
@@ -62,6 +77,7 @@ public class SocialFragment extends Fragment {
             friendListView.setAdapter(new FriendListAdapter(getContext(), friendList));
           }
 
+          //Method required by ValueEventListener
           @Override
           public void onCancelled(@NonNull DatabaseError databaseError) {
           }
@@ -70,6 +86,8 @@ public class SocialFragment extends Fragment {
     view = inflater.inflate(R.layout.fragment_social, container, false);
     friendListView = view.findViewById(R.id.friendList);
     friendListView.setAdapter(new FriendListAdapter(getActivity(), friendList));
+
+    //When user clicks on an element of the friendList, displays a dialog with more details about the friend
     friendListView.setOnItemClickListener(
         (parent, clickedView, position, id) -> {
           User friend = friendList.get(position);
@@ -81,12 +99,18 @@ public class SocialFragment extends Fragment {
               .show();
         });
 
-    searchListView = view.findViewById(R.id.userSearchList);
+    searchResultsListView = view.findViewById(R.id.userSearchList);
     setHasOptionsMenu(true);
 
     return view;
   }
 
+  /**
+   * Inflates options menu. Configures user search bar in the options menu.
+   *
+   * @param menu     Menu used by the current activity
+   * @param inflater MenuInflater used by the current activity
+   */
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
@@ -97,7 +121,7 @@ public class SocialFragment extends Fragment {
     searchView.setOnQueryTextListener(
         new SearchView.OnQueryTextListener() {
 
-          //Method required by onQueryTextListener
+          //Method required by OnQueryTextListener
           @Override
           public boolean onQueryTextSubmit(String query) {
             return false;
@@ -106,8 +130,8 @@ public class SocialFragment extends Fragment {
           /**
            * Refreshes search results every time user types/deletes a letter
            *
-           * @param newText the string currently in the search bar
-           * @return false since listener does not show any suggestions
+           * @param newText The string currently in the search bar
+           * @return False since listener does not show any suggestions
            */
           @Override
           public boolean onQueryTextChange(String newText) {
@@ -125,9 +149,18 @@ public class SocialFragment extends Fragment {
         });
   }
 
+  /**
+   * Inflates list view with either friend requests or the leaderboard depending on which button was
+   * clicked. Doesn't process clicks of search button since that is handled automatically.
+   *
+   * @param item The item selected by the user
+   * @return True because there is no need for system processing, all processing necessary
+   * processing is done in the method
+   */
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
+    //If friendRequest option was clicked, inflate a dialog with a ListView of the user's friendRequests
     if (item.getItemId() == R.id.optFriendRequests) {
 
       View inflatedView =
@@ -143,7 +176,10 @@ public class SocialFragment extends Fragment {
           .setNegativeButton("Done", (dialog, which) -> dialog.dismiss())
           .create()
           .show();
-    } else if (item.getItemId() == R.id.optLeaderBoard) {
+    }
+
+    //If the leaderboard option was clicked, inflate a dialog with a ListView of the global leaderboard
+    else if (item.getItemId() == R.id.optLeaderBoard) {
 
       View inflatedView =
           LayoutInflater.from(getContext())
@@ -152,6 +188,10 @@ public class SocialFragment extends Fragment {
       leaderboardListView = inflatedView.findViewById(R.id.listView);
       leaderboardListView.setAdapter(new LeaderboardListAdapter(getContext(), userList));
 
+      /*
+       * When user clicks on an element of the leaderboard, displays a dialog with more details
+       * about the selected user
+       */
       leaderboardListView.setOnItemClickListener(
           (parent, view1, position, id) ->
               new AlertDialog.Builder(getContext())
@@ -173,7 +213,7 @@ public class SocialFragment extends Fragment {
   }
 
   /**
-   * Filters usernames based on user's input Stores filtered usernames in a new ArrayList Updates
+   * Filters users based on user's input. Stores filtered users in a new ArrayList and updates
    * display with search results
    *
    * @param searchText the user's input
@@ -185,25 +225,28 @@ public class SocialFragment extends Fragment {
         .collect(Collectors.toCollection(ArrayList::new));
 
     filteredUserList.remove(user);
-    searchListView.setAdapter(new UserSearchAdapter(getActivity(), filteredUserList));
+    searchResultsListView.setAdapter(new UserSearchAdapter(getActivity(), filteredUserList));
   }
 
-  /**
-   * Sets friend list visible Sets search results invisible
-   */
+
+  //Sets friend list visible and sets search results invisible
   private void setFriendListVisible() {
     friendListView.setVisibility(View.VISIBLE);
-    searchListView.setVisibility(View.INVISIBLE);
+    searchResultsListView.setVisibility(View.INVISIBLE);
+  }
+
+  //Sets friend list invisible and sets search results visible
+  private void setFriendListInvisible() {
+    friendListView.setVisibility(View.INVISIBLE);
+    searchResultsListView.setVisibility(View.VISIBLE);
   }
 
   /**
-   * Sets friend list invisible Sets search results visible
+   * Generates text that describes the time elapsed between the current time and the entered time
+   *
+   * @param oldTime The time that is to be compared to the current time
+   * @return The text that describes the time elapsed between the passed in time and current time
    */
-  private void setFriendListInvisible() {
-    friendListView.setVisibility(View.INVISIBLE);
-    searchListView.setVisibility(View.VISIBLE);
-  }
-
   private String getTimeDifferenceText(long oldTime) {
 
     long currentTime = System.currentTimeMillis();
@@ -240,30 +283,26 @@ public class SocialFragment extends Fragment {
     }
   }
 
-  enum RequestType {
+  //Enum to hold the status of user's friend request that they have sent
+  enum RequestStatus {
     SENT,
     ACCEPTED,
     NONE
   }
 
-  /**
-   * Custom adapter for friendList ListView
-   */
+  //Custom adapter for friendListView
   class FriendListAdapter extends BaseAdapter {
 
     int count;
-
     Context context;
-
     private LayoutInflater layoutInflater;
-
     private ArrayList<User> friends = new ArrayList<>();
 
     /**
      * Constructor
      *
-     * @param context current application context
-     * @param friends user's friend list
+     * @param context Current application context
+     * @param friends User's friend list
      */
     public FriendListAdapter(Context context, ArrayList<User> friends) {
       layoutInflater = LayoutInflater.from(context);
@@ -273,7 +312,7 @@ public class SocialFragment extends Fragment {
     }
 
     /**
-     * @return number of elements there will be in ListView
+     * @return The number of elements there will be in ListView
      */
     @Override
     public int getCount() {
@@ -281,17 +320,16 @@ public class SocialFragment extends Fragment {
     }
 
     /**
-     * @param i index of object
-     * @return username at index i
+     * @param i Index of object
+     * @return User at index i
      */
     @Override
     public Object getItem(int i) {
       return friends.get(i);
     }
 
-    /**
-     * Required method in order to be subclass of BaseAdapter
-     */
+
+    //Required method to inherit from BaseAdapter
     @Override
     public long getItemId(int i) {
       return i;
@@ -329,9 +367,7 @@ public class SocialFragment extends Fragment {
       return view;
     }
 
-    /**
-     * Structure to hold all of the components of a list element
-     */
+    //Structure to hold all of the components of a list element
     class FriendListHolder {
 
       TextView usernameText;
@@ -341,15 +377,11 @@ public class SocialFragment extends Fragment {
     }
   }
 
-  /**
-   * Structure to hold all of the components of a list element
-   */
+  //Custom adapter for requestListView
   class FriendRequestAdapter extends BaseAdapter {
 
     int count;
-
     Context context;
-
     private LayoutInflater layoutInflater;
 
     private ArrayList<FriendRequest> friendRequests = new ArrayList<>();
@@ -385,9 +417,7 @@ public class SocialFragment extends Fragment {
       return friendRequests.get(i);
     }
 
-    /**
-     * Required method in order to be subclass of BaseAdapter
-     */
+    //Required method to inherit from BaseAdapter
     @Override
     public long getItemId(int i) {
       return i;
@@ -423,6 +453,10 @@ public class SocialFragment extends Fragment {
 
               User requestSender = dataSnapshot.child(request.getUsername()).getValue(User.class);
 
+              /*
+               * Accepts friend request from requestSender and adds user to requestSender's
+               * friendList and requestSender to user's friendList. Updates values in Firebase.
+               */
               holder.btnAccept.setOnClickListener(view -> {
                 user.acceptFriendRequest(friendRequests.get(i));
                 requestSender.addFriend(user.getUsername());
@@ -433,6 +467,7 @@ public class SocialFragment extends Fragment {
                     new FriendRequestAdapter(getContext(), user.getFriendRequests()));
               });
 
+              //Deletes friend request from requestSender and adds updates user's request list in Firebase.
               holder.btnDelete.setOnClickListener(view -> {
                 user.removeFriendRequest(friendRequests.get(i));
                 users.child(user.getUsername()).setValue(user);
@@ -441,6 +476,7 @@ public class SocialFragment extends Fragment {
               });
             }
 
+            //Method required by ValueEventListener
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
@@ -452,9 +488,7 @@ public class SocialFragment extends Fragment {
       return view;
     }
 
-    /**
-     * Structure for holding all components of a list element
-     */
+    //Structure for holding all components of a list element
     class FriendRequestHolder {
 
       TextView usernameText;
@@ -464,24 +498,19 @@ public class SocialFragment extends Fragment {
     }
   }
 
-  /**
-   * Structure to hold all of the components of a list element
-   */
+  //Custom adapter for leaderboardListView
   class LeaderboardListAdapter extends BaseAdapter {
 
     int count;
-
     Context context;
-
     private LayoutInflater layoutInflater;
-
     private ArrayList<User> userList = new ArrayList<>();
 
     /**
      * Constructor
      *
-     * @param context  current application context
-     * @param userList list of all users in database
+     * @param context  Current application context
+     * @param userList List of all users in database
      */
     public LeaderboardListAdapter(Context context, ArrayList<User> userList) {
 
@@ -492,7 +521,7 @@ public class SocialFragment extends Fragment {
     }
 
     /**
-     * @return number of elements there will be in ListView
+     * @return Number of elements there will be in ListView
      */
     @Override
     public int getCount() {
@@ -500,17 +529,15 @@ public class SocialFragment extends Fragment {
     }
 
     /**
-     * @param i index of object
-     * @return username at index i
+     * @param i Index of object
+     * @return User at index i
      */
     @Override
     public Object getItem(int i) {
       return userList.get(i);
     }
 
-    /**
-     * Required method in order to be subclass of BaseAdapter
-     */
+    //Required method to inherit from BaseAdapter
     @Override
     public long getItemId(int i) {
       return i;
@@ -549,9 +576,7 @@ public class SocialFragment extends Fragment {
       return view;
     }
 
-    /**
-     * Structure for holding all components of a list element
-     */
+    //Structure for holding all components of a list element
     class LeaderboardListHolder {
 
       TextView usernameText;
@@ -561,9 +586,8 @@ public class SocialFragment extends Fragment {
     }
   }
 
-  /**
-   * Custom adapter for searchResults ListView
-   */
+
+  //Custom adapter for searchResultsListView
   class UserSearchAdapter extends BaseAdapter {
 
     int count;
@@ -574,8 +598,8 @@ public class SocialFragment extends Fragment {
     /**
      * Constructor
      *
-     * @param context        current application context
-     * @param filterUserList filtered search results
+     * @param context        Current application context
+     * @param filterUserList Filtered search results
      */
     public UserSearchAdapter(Context context, ArrayList<User> filterUserList) {
 
@@ -587,7 +611,7 @@ public class SocialFragment extends Fragment {
     }
 
     /**
-     * @return number of elements there will be in ListView
+     * @return Number of elements there will be in ListView
      */
     @Override
     public int getCount() {
@@ -595,17 +619,15 @@ public class SocialFragment extends Fragment {
     }
 
     /**
-     * @param i index of object
-     * @return username at index i
+     * @param i Index of object
+     * @return User at index i
      */
     @Override
     public Object getItem(int i) {
       return filterUserList.get(i);
     }
 
-    /**
-     * Required method in order to be subclass of BaseAdapter
-     */
+    //Required method to inherit from BaseAdapter
     @Override
     public long getItemId(int i) {
       return i;
@@ -629,7 +651,7 @@ public class SocialFragment extends Fragment {
       holder.updateFriendStatus = thisView.findViewById(R.id.updateFriendStatus);
 
       final User searchedUser = filterUserList.get(i);
-      final RequestType requestType;
+      final RequestStatus requestStatus;
 
       holder.usernameText.setText(searchedUser.getUsername());
 
@@ -637,34 +659,35 @@ public class SocialFragment extends Fragment {
 
         holder.requestStatusText.setText("Requested");
         holder.updateFriendStatus.setText("Cancel");
-        requestType = RequestType.SENT;
+        requestStatus = RequestStatus.SENT;
       } else if (user.isFriendOfUser(searchedUser.getUsername())) {
 
         holder.requestStatusText.setText("Accepted");
         holder.updateFriendStatus.setText("Remove");
-        requestType = RequestType.ACCEPTED;
+        requestStatus = RequestStatus.ACCEPTED;
       } else {
 
         holder.requestStatusText.setText("None");
         holder.updateFriendStatus.setText("Request");
-        requestType = RequestType.NONE;
+        requestStatus = RequestStatus.NONE;
       }
 
       users.addListenerForSingleValueEvent(
           new ValueEventListener() {
             /**
-             * Checks to see if user has SENT/is a friend of searchedUser If user is a friend, allow
-             * them to remove the searchedUser from their friend list If user has already SENT a
-             * friend request, allow them to cancel the request If neither, allow user to send the
-             * searchedUser a friend request
+             * Checks to see if user has sent a friend request/is a friend of searchedUser. If user
+             * is a friend, allow them to remove the searchedUser from their friend list. If user
+             * has already sent a friend request, allow them to cancel the request. If neither,
+             * allow user to send the searchedUser a friend request
              *
              * @param dataSnapshot snapshot of the Users node in its current state
              */
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-              switch (requestType) {
+              switch (requestStatus) {
                 case SENT:
+                  //Cancels friend request send to searchedUser
                   holder.updateFriendStatus.setOnClickListener(view -> {
                     searchedUser.removeFriendRequestFromUser(username);
                     users.child(searchedUser.getUsername()).setValue(searchedUser);
@@ -674,6 +697,7 @@ public class SocialFragment extends Fragment {
                   break;
 
                 case ACCEPTED:
+                  //Removes searchedUser from friendList
                   holder.updateFriendStatus.setOnClickListener(view -> {
                     user.removeFriend(searchedUser.getUsername());
                     searchedUser.removeFriend(username);
@@ -686,6 +710,7 @@ public class SocialFragment extends Fragment {
                   break;
 
                 case NONE:
+                  //Sends friend request send to searchedUser
                   holder.updateFriendStatus.setOnClickListener(view -> {
                     searchedUser.addFriendRequest(
                         new FriendRequest(System.currentTimeMillis(), username));
@@ -697,6 +722,7 @@ public class SocialFragment extends Fragment {
               }
             }
 
+            //Method required by ValueEventListener
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
@@ -708,9 +734,7 @@ public class SocialFragment extends Fragment {
       return view;
     }
 
-    /**
-     * Structure for holding all components of a list element
-     */
+    //Structure for holding all components of a list element
     class FriendSearchHolder {
 
       TextView usernameText;
