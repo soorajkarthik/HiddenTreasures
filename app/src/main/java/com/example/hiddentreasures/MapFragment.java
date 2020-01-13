@@ -289,8 +289,8 @@ public class MapFragment extends Fragment {
                   clusterManager.cluster();
 
                   new AlertDialog.Builder(getContext())
-                      .setTitle(
-                          "Congratulations!\nYou found a " + treasure.getRarity() + " treasure!")
+                      .setTitle("Congratulations!")
+                      .setMessage("You found a " + treasure.getRarity() + " treasure!")
                       .setNegativeButton("Ok",
                           ((dialog, which) ->
                               Toast.makeText(getContext(), "Keep Exploring!",
