@@ -377,8 +377,10 @@ public class MapFragment extends Fragment {
          */
         new AlertDialog.Builder(getContext())
             .setTitle("Location Permission Needed")
-            .setMessage("This app needs location permissions to be used to its fullest. "
-                + "\nPlease accept to use location functionality")
+            .setMessage(
+                "This app needs location permissions in order to allow users to collect treasures "
+                    + "they are standing near. Please grant location permissions in order to use "
+                    + "all features of this app.")
             .setPositiveButton("OK", (dialog, which) -> {
               // Prompt the user once explanation has been shown
               ActivityCompat.requestPermissions(
