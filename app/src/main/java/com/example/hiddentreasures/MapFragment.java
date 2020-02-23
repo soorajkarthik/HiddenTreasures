@@ -343,7 +343,7 @@ public class MapFragment extends Fragment {
 
           //Initializes location request to retrieves user's location every 2.5 seconds
           locationRequest = new LocationRequest();
-          locationRequest.setInterval(2500); // five second interval
+          locationRequest.setInterval(2500);
           locationRequest.setFastestInterval(2500);
           locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
