@@ -40,4 +40,4 @@ HiddenTreasures is an application that’s designed to encourage the user to get
 - Asyncronous Tasks
 
 #### Backend Functions
-Click here for repository with all of the backend functions for this application 
+[Click here for repository with all of the backend functions for this application](https://github.com/soorajkarthik/HiddenTreasuresBackend)
